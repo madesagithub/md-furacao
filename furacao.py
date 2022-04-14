@@ -13,10 +13,19 @@ from Furo import Furo
 nro_cabecotes = 16
 nro_brocas = 21
 distancia_pinos = 32 # mm
+
+posicao_cabecotes = {
+    'esquerda': [1],
+    'direita': [10],
+    'inferior': list(range(2, 10)),
+    'superior': list(range(11, 16)),
+    'traseiro': list(range(16, 20))
+}
 # ----------
 
 # Arquivo
 filename = 'DIVISÓRIA 12X387X1652.bpp'
+filename = 'TAMPO MAL 15X440X2280.bpp'
 file = open(filename, 'r', encoding='latin1')
 # ----------
 
@@ -30,8 +39,11 @@ file = open(filename, 'r', encoding='latin1')
 
 cabecotes = []
 for i in range(1, nro_cabecotes + 1):
-	cabecote = Cabecote(i, nro_brocas, distancia_pinos)
-	cabecotes.append(cabecote)
+	for j in posicao_cabecotes:
+		if i in posicao_cabecotes[j]:
+			cabecote = Cabecote(i, nro_brocas, distancia_pinos, j)
+			cabecotes.append(cabecote)
+			break
 	
 	# vetor = np.array([0 for i in range(nro_pinos)])
 	# vetor = np.array([0, 1, 2, 3])
@@ -144,6 +156,7 @@ for i in range(1, nro_brocas + 1):
 # Distancia x
 table.add_row(list('-' for cabecote in cabecotes))
 table.add_row(list(cabecote.x for cabecote in cabecotes))
+table.add_row(list(cabecote.posicao[0] for cabecote in cabecotes))
 print(table)
 # ----------
 
