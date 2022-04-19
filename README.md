@@ -3,9 +3,7 @@
 
 ## Roadmap
 - [ ] Automatizar a informação das informações de furação.
-
 - [ ] Criar mecanismo automático que crie padrão de furação para as furadeiras lidear através da interação dos softwares Ardis e Topsolid.
-
 - [ ] Criar interface gráfica para consulta das informações na máquina.
 
 
@@ -39,20 +37,35 @@
 ### Cabeçotes
 
 | Side  	| CRN   | Posição		  				|
-|-------	| ----- |------------------------------ |
-| 0 : 0 	| 1	 	| Furação Inferior 				|
+|-------	|------	|------------------------------ |
+| 0 : 0 	| 1		| Furação Inferior 				|
 | 0 : 1 	| 1	 	| Topo/Vertical Esquerda		|
 | 0 : 2 	| 	 	|				  				|
 | 0 : 3 	| 4	 	| Topo/Vertical Direita	 		|
 | 0 : 4 	| 	 	|						   		|
 | 0 : 5 	| 4	 	| Furação Superior ~frontal~	|
 
+| CRN   | Posição		  		|
+|------ |----------------------	|
+| 1		| Esquerdo 				|
+| 2		| Frontal (nunca usado)	|
+| 3		| Direito				|
+| 4		| Traseiro 				|
+
 - Posições
 	- Primeiro cabeçote: `0:1`
 	- Último cabeçote: `0:3`
 
 
-### Furadeira
+### Furadeiras
+
+#### Furadeira-1
+
+| Atributo					| Valor	|
+|--------------------------	|------	|
+| Número de cabeçotes		| 19	|
+| Número de brocas			| 21	|
+| Distância entre os pinos	| 32	|
 
 | Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
 |---------- |-------------- |-------------- |------------------------------ |
@@ -75,3 +88,30 @@
 | 17		| Traseiro  	| 2		 		|								|
 | 18		| Traseiro	    | 3		 		|								|
 | 19		| Traseiro  	| 4		 		|								|
+
+#### Furadeira-2
+
+| Atributo					| Valor	|
+|--------------------------	|------	|
+| Número de cabeçotes		| 19	|
+| Número de brocas			| 21	|
+| Distância entre os pinos	| 32	|
+
+| Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
+|---------- |-------------- |-------------- |------------------------------ |
+| 1		 	| Topo esquerdo	| 				| Início						|
+| 2			| Inferior  	| 1				|								|
+| 3			| Inferior  	| 2				|								|
+| 4		 	| Inferior  	| 3				|								|
+| 5			| Inferior  	| 4				|								|
+| 6			| Inferior  	| 5				|								|
+| 7		 	| Inferior  	| 6				|								|
+| 8		 	| Inferior  	| 7				|								|
+| 9		 	| Inferior	    | 8				|								|
+| 10		| Superior		| 1				|								|
+| 11		| Superior  	| 2			 	|								|
+| 12		| Superior  	| 3		 		|								|
+| 13		| Superior  	| 4			 	|								|
+| 14		| Superior  	| 5		 		|								|
+| 15		| Superior  	| 6		 		|								|
+| 16		| Topo direito  | 				| Final (x = medida da peça)	|

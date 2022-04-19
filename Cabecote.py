@@ -10,7 +10,6 @@ class Cabecote:
 		for i in range(1, nro_brocas + 1):
 			self.brocas[i] = 'x'
 
-	# def setBroca(self, nro, nro_broca, broca):
 	def setBroca(self, furo, var = 'y'):
 		nro_broca = getattr(furo, var) / self.distancia_pinos
 		self.brocas[nro_broca] = furo.broca

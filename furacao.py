@@ -1,4 +1,5 @@
 # import pandas as pd
+import os
 from typing import OrderedDict
 import numpy as np
 import pandas as pd
@@ -9,13 +10,18 @@ from collections import defaultdict
 from Cabecote import Cabecote
 from Furo import Furo
 
+
 # Arquivo
+# --------------------
 filename = 'DIVISÓRIA 12X387X1652.bpp'
 filename = 'TAMPO MAL 15X440X2280.bpp'
-file = open(filename, 'r', encoding='latin1')
-# ----------
+dir = os.path.dirname(__file__) + '/'
+file = open(dir + filename, 'r', encoding='latin1')
+# --------------------
+
 
 # Variáveis de configuração
+# --------------------
 furadeira = 'furadeira-2'
 
 # Configuração de furadeiras
@@ -25,11 +31,11 @@ furadeiras = {
 		'nro_brocas': 21,
 		'distancia_pinos': 32,
 		'posicao_cabecotes': {
-			'esquerda': [1],
-			'direita': [10],
-			'inferior': list(range(2, 10)),
-			'superior': list(range(11, 16)),
-			'traseiro': list(range(16, 20)),
+			'esquerda': [1],					# 1
+			'direita': [10],					# 1
+			'inferior': list(range(2, 10)),		# 8
+			'superior': list(range(11, 16)),	# 5
+			'traseiro': list(range(16, 20)),	# 4
 		},
 	},
 	'furadeira-2': {
@@ -37,20 +43,24 @@ furadeiras = {
 		'nro_brocas': 21,
 		'distancia_pinos': 32,
 		'posicao_cabecotes': {
-			'esquerda': [1],
-			'direita': [16],
-			'inferior': list(range(2, 10)),
-			'superior': list(range(10, 16)),
+			'esquerda': [1],					# 1
+			'direita': [16],					# 1
+			'inferior': list(range(2, 10)),		# 8
+			'superior': list(range(10, 16)),	# 6
 		},
 	}
 }
-# ----------
+# --------------------
+
 
 # Definição de variáveis
+# --------------------
 nro_cabecotes = furadeiras[furadeira]['nro_cabecotes']
 posicao_cabecotes = furadeiras[furadeira]['posicao_cabecotes']
 nro_brocas = furadeiras[furadeira]['nro_brocas']
 distancia_pinos = furadeiras[furadeira]['distancia_pinos']
+# --------------------
+
 
 # Definições
 # Side 0 : 0 - Horizontal inferior
@@ -60,6 +70,9 @@ distancia_pinos = furadeiras[furadeira]['distancia_pinos']
 # Side 0 : 4 - 
 # Side 0 : 5 - Frontal
 
+
+# Criação dos cabeçotes
+# --------------------
 cabecotes = []
 for i in range(1, nro_cabecotes + 1):
 	for j in posicao_cabecotes:
@@ -67,15 +80,16 @@ for i in range(1, nro_cabecotes + 1):
 			cabecote = Cabecote(i, nro_brocas, distancia_pinos, j)
 			cabecotes.append(cabecote)
 			break
+# --------------------
 
-# furos = {}
-# furos = np.array([])
-# ----------
 
+# Criação de furos
+# --------------------
 furos = []
 count = 0
 flag_program = False
 
+# Varredura do arquivo
 for line in file:
 	if line.find("PAN=LPX") == 0:
 		lpx = line.split('|')[1]
@@ -110,13 +124,13 @@ for line in file:
 
 		# Dados
 		side = line[5].strip()
-		crn = int(line[6].removeprefix(' ').replace('"', ''))
-		x = float(line[7].removeprefix(' '))
-		y = float(line[8].removeprefix(' '))
-		z = float(line[9].removeprefix(' '))
-		dp = float(line[10].removeprefix(' '))
-		diametro = float(line[11].removeprefix(' '))
-		p = int(line[12].removeprefix(' '))
+		crn = int(line[6].strip().replace('"', ''))
+		x = float(line[7].strip())
+		y = float(line[8].strip())
+		z = float(line[9].strip())
+		dp = float(line[10].strip())
+		diametro = float(line[11].strip())
+		p = int(line[12].strip())
 
 		broca = str(diametro)
 		if (p == 1):
@@ -136,11 +150,10 @@ for line in file:
 		)
 
 		furos.append(furo)
+# --------------------
 
-# --------------------------------------------------
 
-
-# Tabela da Peça
+# Imprimir tabela da peça
 # --------------------
 peca = PrettyTable()
 peca.title = nome
@@ -151,28 +164,6 @@ peca.add_row(['Largura (Y)', lpy])
 peca.add_row(['Espessura (Z)', lpz])
 print(peca)
 # --------------------
-
-
-# Tabela de dados
-# --------------------
-data = PrettyTable()
-data.title = nome
-data.field_names = ["Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
-# data.field_names = list(furos[0].__dict__.keys())
-
-for i in furos:
-	data.add_row(list(i.__dict__.values()))
-
-print(data)
-# --------------------
-
-
-
-
-
-
-
-
 
 
 
@@ -206,13 +197,18 @@ for array in arrays:
 
 furos = furos_bkp
 
-# Tabela de dados
+
+
+
+# Imprimir tabela de dados de furos
+# --------------------
 data = PrettyTable()
 data.title = nome
 data.field_names = ["Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
 for i in furos:
 	data.add_row(list(i.__dict__.values()))
 print(data)
+# --------------------
 
 
 
@@ -268,7 +264,7 @@ for side in furos:
 		# Ordenar
 		groups_x = dict(OrderedDict(sorted(groups_x.items())))
 
-		# Provávelmente não haverá casos onde x tenha multiplos e nçao multiplos
+		# Provávelmente não haverá casos onde x tenha multiplos e não multiplos
 		# Agrupar por múltiplos de distancia_pinos
 		# groups_x_dp = {}
 		# for x in list(groups_x.keys()):
@@ -359,7 +355,7 @@ data.field_names = ["Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"
 # print(data)
 # furos.map(key=lambda furo: furo.x)
 
-# Tabela de cabeçotes
+# Imprimir tabela de cabeçotes
 # --------------------
 table = PrettyTable()
 table.title = 'Cabeçotes'
