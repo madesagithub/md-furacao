@@ -4,6 +4,7 @@ class Cabecote:
 		self.distancia_pinos = distancia_pinos
 		self.posicao = posicao
 		self.x = 0
+		self.deslocamento_x = 0
 		self.used = False
 
 		self.brocas = {}
@@ -11,8 +12,14 @@ class Cabecote:
 			self.brocas[i] = 'x'
 
 	def setBroca(self, furo, var = 'y'):
-		nro_broca = getattr(furo, var) / self.distancia_pinos
+		nro_broca = getattr(furo, var) // self.distancia_pinos
+		deslocamento = getattr(furo, var) % self.distancia_pinos
+
 		self.brocas[nro_broca] = furo.broca
+		
+		if deslocamento != 0:
+			self.deslocamento_x = deslocamento
+			print(deslocamento)
 
 	def setX(self, x):
 		self.x = x

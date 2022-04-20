@@ -14,7 +14,7 @@ from Furo import Furo
 # Arquivo
 # --------------------
 filename = 'DIVISÓRIA 12X387X1652.bpp'
-filename = 'TAMPO MAL 15X440X2280.bpp'
+# filename = 'TAMPO MAL 15X440X2280.bpp'
 dir = os.path.dirname(__file__) + '/'
 file = open(dir + filename, 'r', encoding='latin1')
 # --------------------
@@ -65,9 +65,9 @@ distancia_pinos = furadeiras[furadeira]['distancia_pinos']
 # Definições
 # Side 0 : 0 - Horizontal inferior
 # Side 0 : 1 - Vertical esquerda
-# Side 0 : 2 - 
+# Side 0 : 2 -
 # Side 0 : 3 - Vertical direita
-# Side 0 : 4 - 
+# Side 0 : 4 -
 # Side 0 : 5 - Frontal
 
 
@@ -92,11 +92,14 @@ flag_program = False
 # Varredura do arquivo
 for line in file:
 	if line.find("PAN=LPX") == 0:
-		lpx = line.split('|')[1]
+		lpx = float(line.split('|')[1])
+		lpx = round(lpx, 1)
 	if line.find("PAN=LPY") == 0:
-		lpy = line.split('|')[1]
+		lpy = float(line.split('|')[1])
+		lpy = round(lpy, 1)
 	if line.find("PAN=LPZ") == 0:
-		lpz = line.split('|')[1]
+		lpz = float(line.split('|')[1])
+		lpz = round(lpz, 1)
 
 	if line.find("[PROGRAM]") == 0:
 		flag_program = True
@@ -159,6 +162,7 @@ peca = PrettyTable()
 peca.title = nome
 peca.field_names = ['Dimensão', 'Valor (mm)']
 peca.align = 'l'
+peca._align['Valor (mm)'] = 'r'
 peca.add_row(['Comprimento (X)', lpx])
 peca.add_row(['Largura (Y)', lpy])
 peca.add_row(['Espessura (Z)', lpz])
@@ -239,16 +243,22 @@ for side in furos:
 	# Define a posição
 	if side == '0 : 0':
 		posicao = 'inferior'
+		atributo = 'x'
 	elif side == '0 : 1':
 		posicao = 'esquerda'
+		atributo = 'y'
 	elif side == '0 : 2':
 		posicao = ''
+		atributo = ''
 	elif side == '0 : 3':
 		posicao = 'direita'
+		atributo = 'y'
 	elif side == '0 : 4':
 		posicao = ''
+		atributo = ''
 	elif side == '0 : 5':
 		posicao = 'superior'
+		atributo = 'x'
 
 
 	# Inferior
@@ -256,13 +266,13 @@ for side in furos:
 	# --------------------
 	if side == '0 : 0' or side == '0 : 5':
 		# Agrupar por x
-		groups_x = defaultdict(list)
+		groups = defaultdict(list)
 		for furo in furos[side]:
-			groups_x[furo.x].append(furo)
-		groups_x = dict(groups_x.items())
+			groups[furo.x].append(furo)
+		groups = dict(groups.items())
 
 		# Ordenar
-		groups_x = dict(OrderedDict(sorted(groups_x.items())))
+		groups = dict(OrderedDict(sorted(groups.items())))
 
 		# Provávelmente não haverá casos onde x tenha multiplos e não multiplos
 		# Agrupar por múltiplos de distancia_pinos
@@ -276,19 +286,19 @@ for side in furos:
 		# 			groups_x_dp[x]['não multiplos'].append(furo)
 
 		# Selecionar cabeçotes
-		for x in groups_x:
+		for x in groups:
 
 			for cabecote in cabecotes:
 				if cabecote.posicao == posicao and cabecote.used == False:
 					break
-					
+
 			cabecote.use()
 			cabecote.setX(x)
 
 			# Aplica os furos
-			for furo in groups_x[x]:
+			for furo in groups[x]:
 				cabecote.setBroca(furo)
-	
+
 
 	# Esquerda
 	# Direita
@@ -296,26 +306,31 @@ for side in furos:
 	# Inverte x e y????
 	elif side == '0 : 1' or side == '0 : 3':
 		# Agrupar por y
-		groups_y = defaultdict(list)
+		groups = defaultdict(list)
 		for furo in furos[side]:
-			groups_y[furo.y].append(furo)
-		groups_y = dict(groups_y.items())
+			groups[furo.y].append(furo)
+		groups = dict(groups.items())
 
 		# Ordenar
-		groups_y = dict(OrderedDict(sorted(groups_y.items())))
-		
+		groups = dict(OrderedDict(sorted(groups.items())))
+
 		# Selecionar cabeçotes
-		for y in groups_y:
+		for y in groups:
 
 			for cabecote in cabecotes:
 				if cabecote.posicao == posicao and cabecote.used == False:
 					break
-					
+
 			cabecote.use()
-			cabecote.setX(y)
+
+			# Define a posição do primeiro e último cabeçote
+			if posicao == 'esquerda':
+				cabecote.setX(0)
+			elif posicao == 'direita':
+				cabecote.setX(lpx)
 
 			# Aplica os furos
-			for furo in groups_y[y]:
+			for furo in groups[y]:
 				cabecote.setBroca(furo, 'x')
 
 
@@ -366,20 +381,20 @@ for i in range(1, nro_brocas + 1):
 	table.add_row(list(cabecote.brocas[i] for cabecote in cabecotes))
 
 # Distancia x
-table.add_row(list('-' for cabecote in cabecotes))
+table.add_row(list('---' for cabecote in cabecotes))
 table.add_row(list(cabecote.x for cabecote in cabecotes))
 table.add_row(list(cabecote.posicao[0:3] for cabecote in cabecotes))
 
 # Índice
 indice = ''
 table._field_names.insert(0, indice)
-table._align[indice] = 'c' 
-table._valign[indice] = 't' 
-for i, _ in enumerate(table._rows): 
-	if i < nro_brocas: 
-		table._rows[i].insert(0, (i+1) * distancia_pinos) 
+table._align[indice] = 'c'
+table._valign[indice] = 't'
+for i, _ in enumerate(table._rows):
+	if i < nro_brocas:
+		table._rows[i].insert(0, (i+1) * distancia_pinos)
 	else:
-		table._rows[i].insert(0, '') 
+		table._rows[i].insert(0, '')
 
 print(table)
 # --------------------
