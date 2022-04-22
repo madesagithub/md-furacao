@@ -24,8 +24,8 @@
 
 | Atributo			 	| Descrição									|
 |----------------------	|------------------------------------------	|
-| **Side**				| Corresponde ao lado de furação		   	|
-| **CRN**			 	| Corresponde ao lado de furação		   	|
+| **Side**				| Lado/face de furação		   				|
+| **CRN**			 	| Sentido de furação da broca			   	|
 | **DP**			   	| Profundidade do furo					 	|
 | **TRH ou T**		 	| Se é um furo passante (atravessa a peça) 	|
 | **DIA ou Diâmetro**   | Diâmetro do furo							|
@@ -36,21 +36,21 @@
 
 ### Cabeçotes
 
-| Side  	| CRN   | Posição		  				|
-|-------	|------	|------------------------------ |
-| 0 : 0 	| 1		| Furação Inferior 				|
-| 0 : 1 	| 1	 	| Topo/Vertical Esquerda		|
-| 0 : 2 	| 	 	|				  				|
-| 0 : 3 	| 4	 	| Topo/Vertical Direita	 		|
-| 0 : 4 	| 	 	|						   		|
-| 0 : 5 	| 4	 	| Furação Superior ~frontal~	|
+| Side  | CRN	| Posição		  			|
+|------	|------	|--------------------------	|
+| 0 : 0 | 1		| Inferior 					|
+| 0 : 1 | 1	 	| Topo/Vertical Esquerda	|
+| 0 : 2 | 	 	|				  			|
+| 0 : 3 | 4	 	| Topo/Vertical Direita	 	|
+| 0 : 4 | 	 	|						   	|
+| 0 : 5 | 4	 	| Superior					|
 
-| CRN   | Posição		  		|
-|------ |----------------------	|
-| 1		| Esquerdo 				|
-| 2		| Frontal (nunca usado)	|
-| 3		| Direito				|
-| 4		| Traseiro 				|
+| CRN   | Posição		  							|
+|------ |------------------------------------------	|
+| 1		| Esquerda para Direita / Baixo para Cima	|
+| 2		| 											|
+| 3		| 											|
+| 4		| Direita para Esqeurda / Cima para Baixo 	|
 
 - Posições
 	- Primeiro cabeçote: `0:1`
