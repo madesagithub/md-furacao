@@ -14,8 +14,12 @@ from Furo import Furo
 # Arquivo
 # --------------------
 filename = 'DIVISÓRIA 12X387X1652.bpp'
-# filename = 'TAMPO MAL 15X440X2280.bpp'
-dir = os.path.dirname(__file__) + '/'
+filename = 'TAMPO MAL 15X440X2280.bpp'
+filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'
+filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'
+filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'
+filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'	# Complexo
+dir = os.path.dirname(__file__) + '/Peças/'
 file = open(dir + filename, 'r', encoding='latin1')
 # --------------------
 
@@ -37,6 +41,8 @@ furadeiras = {
 			'superior': list(range(11, 16)),	# 5
 			'traseiro': list(range(16, 20)),	# 4
 		},
+		'eixo_y': 'invertido',					# normal ou invertido
+		'bipartido': False,
 	},
 	'furadeira-2': {
 		'nro_cabecotes': 16,
@@ -48,6 +54,11 @@ furadeiras = {
 			'inferior': list(range(2, 10)),		# 8
 			'superior': list(range(10, 16)),	# 6
 		},
+		'eixo_y': 'normal',						# normal ou invertido
+		'bipartido': [
+			[1, 2, 3, 4],
+			[5, 6, 7, 8],
+		],
 	}
 }
 # --------------------
@@ -59,16 +70,8 @@ nro_cabecotes = furadeiras[furadeira]['nro_cabecotes']
 posicao_cabecotes = furadeiras[furadeira]['posicao_cabecotes']
 nro_brocas = furadeiras[furadeira]['nro_brocas']
 distancia_pinos = furadeiras[furadeira]['distancia_pinos']
+eixo_y = furadeiras[furadeira]['eixo_y']
 # --------------------
-
-
-# Definições
-# Side 0 : 0 - Horizontal inferior
-# Side 0 : 1 - Vertical esquerda
-# Side 0 : 2 -
-# Side 0 : 3 - Vertical direita
-# Side 0 : 4 -
-# Side 0 : 5 - Frontal
 
 
 # Criação dos cabeçotes
@@ -86,8 +89,8 @@ for i in range(1, nro_cabecotes + 1):
 # Criação de furos
 # --------------------
 furos = []
+array_furos = []
 count = 0
-flag_program = False
 
 # Varredura do arquivo
 for line in file:
@@ -103,58 +106,69 @@ for line in file:
 
 	if line.find("[PROGRAM]") == 0:
 		flag_program = True
-	elif flag_program:
-		nome = line.rstrip('\n').replace("'", "")
-		flag_program = False
+	elif 'flag_program' in locals() and flag_program:
+		if line != '\n':
+			nome = line.rstrip('\n').replace("'", "")
+			flag_program = False
 
-	if line.find("@ BG") == 0:
-		# line[ 0]: '@ BG'
-		# line[ 1]: '""'
-		# line[ 2]: '""'
-		# line[ 3]: '37127068'
-		# line[ 4]: '""'
-		# line[ 5]: side
-		# line[ 6]: crn
-		# line[ 7]: x
-		# line[ 8]: y
-		# line[ 9]: z
-		# line[10]: dp
-		# line[11]: diametro
-		# line[12]: p
-		# line[13]: cabeçote
+	if 'nome' in locals():
+		if line.find("@ BG") == 0:
+			# line[ 0]: '@ BG'
+			# line[ 1]: '""'
+			# line[ 2]: '""'
+			# line[ 3]: '37127068'
+			# line[ 4]: '""'
+			# line[ 5]: side
+			# line[ 6]: crn
+			# line[ 7]: x
+			# line[ 8]: y
+			# line[ 9]: z
+			# line[10]: dp
+			# line[11]: diametro
+			# line[12]: p
+			# line[13]: cabeçote
+			# line[37]: "id"
 
-		line = line.split(',')
+			line = line.split(',')
 
-		# Dados
-		side = line[5].strip()
-		crn = int(line[6].strip().replace('"', ''))
-		x = float(line[7].strip())
-		y = float(line[8].strip())
-		z = float(line[9].strip())
-		dp = float(line[10].strip())
-		diametro = float(line[11].strip())
-		p = int(line[12].strip())
+			# Dados
+			id = line[37].strip().replace('"', '')
+			side = line[5].strip()
+			crn = int(line[6].strip().replace('"', ''))
+			x = float(line[7].strip())
+			y = float(line[8].strip())
+			z = float(line[9].strip())
+			dp = float(line[10].strip())
+			diametro = float(line[11].strip())
+			p = int(line[12].strip())
 
-		broca = str(diametro)
-		if (p == 1):
-			broca += 'T'
+			broca = str(diametro)
+			if (p == 1):
+				broca += 'T'
 
-		# Cria o Furo
-		furo = Furo(
-			side,
-			crn,
-			x,
-			y,
-			z,
-			dp,
-			diametro,
-			p,
-			broca
-		)
+			# Cria o Furo
+			furo = Furo(
+				id,
+				side,
+				crn,
+				x,
+				y,
+				z,
+				dp,
+				diametro,
+				p,
+				broca
+			)
 
-		furos.append(furo)
+			array_furos.append(furo)
+		elif line == '\n' and len(array_furos) > 0:
+			furos.append(array_furos)
+			array_furos = []
 # --------------------
 
+for array in furos:
+	print(array)
+exit()
 
 # Imprimir tabela da peça
 # --------------------
@@ -203,14 +217,19 @@ furos = furos_bkp
 
 
 
-
 # Imprimir tabela de dados de furos
 # --------------------
 data = PrettyTable()
 data.title = nome
-data.field_names = ["Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
+data.field_names = ["Id", "Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
 for i in furos:
 	data.add_row(list(i.__dict__.values()))
+indice = ''
+data._field_names.insert(0, indice)
+data._align[indice] = 'c'
+data._valign[indice] = 't'
+for i, _ in enumerate(data._rows):
+	data._rows[i].insert(0, i+1)
 print(data)
 # --------------------
 
@@ -297,7 +316,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[x]:
-				cabecote.setBroca(furo)
+				cabecote.setBroca(furo, eixo_y)
 
 
 	# Esquerda
@@ -331,7 +350,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[y]:
-				cabecote.setBroca(furo, 'x')
+				cabecote.setBroca(furo, eixo_y, 'x')
 
 
 	# Traseira
@@ -392,7 +411,10 @@ table._align[indice] = 'c'
 table._valign[indice] = 't'
 for i, _ in enumerate(table._rows):
 	if i < nro_brocas:
-		table._rows[i].insert(0, (i+1) * distancia_pinos)
+		if eixo_y == 'invertido':
+			table._rows[i].insert(0, (len(table._rows) - 3 - i) * distancia_pinos)
+		else:
+			table._rows[i].insert(0, (i+1) * distancia_pinos)
 	else:
 		table._rows[i].insert(0, '')
 

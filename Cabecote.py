@@ -11,15 +11,18 @@ class Cabecote:
 		for i in range(1, nro_brocas + 1):
 			self.brocas[i] = 'x'
 
-	def setBroca(self, furo, var = 'y'):
-		nro_broca = getattr(furo, var) // self.distancia_pinos
-		deslocamento = getattr(furo, var) % self.distancia_pinos
+	def setBroca(self, furo, eixo_y = 'normal', var = 'y'):
+		if eixo_y == 'invertido':
+			nro_broca = len(self.brocas) + 1 - (getattr(furo, var) // self.distancia_pinos)
+			deslocamento = getattr(furo, var) % self.distancia_pinos
+		elif eixo_y == 'normal':
+			nro_broca = getattr(furo, var) // self.distancia_pinos
+			deslocamento = getattr(furo, var) % self.distancia_pinos
 
 		self.brocas[nro_broca] = furo.broca
-		
+
 		if deslocamento != 0:
 			self.deslocamento_x = deslocamento
-			print(deslocamento)
 
 	def setX(self, x):
 		self.x = x

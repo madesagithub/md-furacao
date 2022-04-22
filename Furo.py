@@ -1,5 +1,6 @@
 class Furo:
-	def __init__(self, side, crn, x, y, z, dp, diametro, p, broca):
+	def __init__(self, id, side, crn, x, y, z, dp, diametro, p, broca):
+		self.id = id
 		self.side = side
 		self.crn = crn
 		self.x = x
