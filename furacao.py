@@ -7,6 +7,7 @@ import pandas as pd
 from prettytable import PrettyTable
 from collections import defaultdict
 
+from Furadeira import Furadeira
 from Cabecote import Cabecote
 from Furo import Furo
 
@@ -31,6 +32,7 @@ furadeira = 'furadeira-2'
 # Configuração de furadeiras
 furadeiras = {
 	'furadeira-1': {
+		'nome': 'furadeira-1',
 		'nro_cabecotes': 19,
 		'nro_brocas': 21,
 		'distancia_pinos': 32,
@@ -45,6 +47,7 @@ furadeiras = {
 		'bipartido': False,
 	},
 	'furadeira-2': {
+		'nome': 'furadeira-2',
 		'nro_cabecotes': 16,
 		'nro_brocas': 21,
 		'distancia_pinos': 32,
@@ -55,10 +58,12 @@ furadeiras = {
 			'superior': list(range(10, 16)),	# 6
 		},
 		'eixo_y': 'normal',						# normal ou invertido
-		'bipartido': [
-			[1, 2, 3, 4],
-			[5, 6, 7, 8],
-		],
+		'bipartido': {							# cabeçote {brocas}
+			2: [
+				[1, 2, 3, 4],
+				[5, 6, 7, 8],
+			]
+		},
 	}
 }
 # --------------------
@@ -71,6 +76,13 @@ posicao_cabecotes = furadeiras[furadeira]['posicao_cabecotes']
 nro_brocas = furadeiras[furadeira]['nro_brocas']
 distancia_pinos = furadeiras[furadeira]['distancia_pinos']
 eixo_y = furadeiras[furadeira]['eixo_y']
+# --------------------
+
+
+# Cria furadeira
+# --------------------
+# furadeira = Furadeira(furadeiras[furadeira])
+# furadeira.imprimir_cabecotes()
 # --------------------
 
 
@@ -166,9 +178,6 @@ for line in file:
 			array_furos = []
 # --------------------
 
-for array in furos:
-	print(array)
-exit()
 
 # Imprimir tabela da peça
 # --------------------
@@ -184,7 +193,195 @@ print(peca)
 # --------------------
 
 
+# Imprimir tabela de dados de furos
+# --------------------
+data = PrettyTable()
+data.title = nome
+data.field_names = ["Id", "Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
+for array in furos:
+	for i in array:
+		data.add_row(list(i.__dict__.values()))
+indice = ''
+data._field_names.insert(0, indice)
+data._align[indice] = 'c'
+data._valign[indice] = 't'
+for i, _ in enumerate(data._rows):
+	data._rows[i].insert(0, i+1)
+print(data)
+# --------------------
 
+
+# for array in furos:
+# 	print(array)
+# exit()
+
+
+
+# Agrupar por side
+groups = defaultdict(list)
+for array in furos:
+	for furo in array:
+		groups[furo.side].append(array)
+		break
+furos = dict(groups.items())
+
+# Agrupa furos por alinhamento
+# for side in furos:
+# 	if side in ['0 : 0', '0 : 5']:
+# 		groups = defaultdict(list)
+# 		for array in furos[side]:
+# 			x_array = list(set(list(furo.x for furo in array)))
+# 			y_array = list(set(list(furo.y for furo in array)))
+
+# 			if len(x_array) == 1:
+# 				# Alinhado no eixo X
+# 				groups['alinhado_x'].append(array)
+# 				# groups[side].append(array)
+# 			elif len(y_array) == 1:
+# 				# Alinhado no eixo Y
+# 				groups['alinhado_y'].append(array)
+# 			else:
+# 				# Não alihado
+# 				groups['nao_alinhado'].append(array)
+# 		furos[side] = dict(groups.items())
+
+
+
+
+
+
+# print(furos)
+
+
+
+
+
+
+
+for side in furos:
+
+	# Define a posição
+	if side == '0 : 0':
+		posicao = 'inferior'
+		atributo = 'x'
+	elif side == '0 : 1':
+		posicao = 'esquerda'
+		atributo = 'y'
+	elif side == '0 : 2':
+		posicao = ''
+		atributo = ''
+	elif side == '0 : 3':
+		posicao = 'direita'
+		atributo = 'y'
+	elif side == '0 : 4':
+		posicao = ''
+		atributo = ''
+	elif side == '0 : 5':
+		posicao = 'superior'
+		atributo = 'x'
+
+
+	# Inferior
+	# Superior
+	# --------------------
+	if side in ['0 : 0', '0 : 5']:
+		# Agrupa furos por alinhamento
+		groups = defaultdict(list)
+		for array in furos[side]:
+			x_array = list(set(list(furo.x for furo in array)))
+			y_array = list(set(list(furo.y for furo in array)))
+
+			if len(x_array) == 1:
+				# Alinhado no eixo X
+				groups['alinhado_x'].append(array)
+				# groups[side].append(array)
+			elif len(y_array) == 1:
+				# Alinhado no eixo Y
+				groups['alinhado_y'].append(array)
+			else:
+				# Não alihado
+				groups['nao_alinhado'].append(array)
+		furos[side] = dict(groups.items())
+		
+		
+		# print(groups)
+		# exit()
+		
+		if 'alinhado_x' in furos[side]:
+			# Agrupar por x
+			groups = defaultdict(list)
+			for array in furos[side]['alinhado_x']:
+				for furo in array:
+					groups[furo.x].append(furo)
+			groups = dict(groups.items())
+
+			# Ordenar
+			groups = dict(OrderedDict(sorted(groups.items())))
+			furos[side]['alinhado_x'] = groups
+
+
+		# Ordenar
+		# groups = dict(OrderedDict(sorted(groups.items())))
+
+		print(furos[side])
+		exit()
+
+		# Provávelmente não haverá casos onde x tenha multiplos e não multiplos
+		# Agrupar por múltiplos de distancia_pinos
+		# groups_x_dp = {}
+		# for x in list(groups_x.keys()):
+		# 	groups_x_dp[x] = {'multiplos': [], 'não multiplos': []}
+		# 	for furo in groups_x[x]:
+		# 		if furo.y % distancia_pinos == 0:
+		# 			groups_x_dp[x]['multiplos'].append(furo)
+		# 		else:
+		# 			groups_x_dp[x]['não multiplos'].append(furo)
+
+		# Selecionar cabeçotes
+		for x in groups:
+
+			for cabecote in cabecotes:
+				if cabecote.posicao == posicao and cabecote.used == False:
+					break
+
+			cabecote.use()
+			cabecote.setX(x)
+
+			# Aplica os furos
+			for furo in groups[x]:
+				cabecote.setBroca(furo, eixo_y)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+exit()
+
+
+
+# Aplicar furos alinhados no eixo x
+# Aplicar furos alinhados no eixo y
 
 
 furos_bkp = []
@@ -283,7 +480,7 @@ for side in furos:
 	# Inferior
 	# Superior
 	# --------------------
-	if side == '0 : 0' or side == '0 : 5':
+	if side in ['0 : 0', '0 : 5']:
 		# Agrupar por x
 		groups = defaultdict(list)
 		for furo in furos[side]:
