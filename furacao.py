@@ -10,6 +10,7 @@ from collections import defaultdict
 from Furadeira import Furadeira
 from Cabecote import Cabecote
 from Furo import Furo
+from Peca import Peca
 
 
 # Arquivo
@@ -27,14 +28,15 @@ file = open(dir + filename, 'r', encoding='latin1')
 
 # Variáveis de configuração
 # --------------------
-furadeira = 'furadeira-2'
+furadeira = 'F500-B'
 
 # Configuração de furadeiras
 furadeiras = {
 	'furadeira-1': {
-		'nome': 'furadeira-1',
+		'marca': 'marca',
+		'nome': 'nome',
 		'nro_cabecotes': 19,
-		'nro_brocas': 21,
+		'nro_pinos': 21,
 		'distancia_pinos': 32,
 		'posicao_cabecotes': {
 			'esquerda': [1],					# 1
@@ -46,11 +48,13 @@ furadeiras = {
 		'eixo_y': 'invertido',					# normal ou invertido
 		'bipartido': False,
 	},
-	'furadeira-2': {
-		'nome': 'furadeira-2',
+	'F400-T': {
+		'marca': 'Lidear',
+		'nome': 'F400-T',
 		'nro_cabecotes': 16,
-		'nro_brocas': 21,
+		'nro_pinos': 21,
 		'distancia_pinos': 32,
+		'distancia_min_cabecotes': 96,
 		'posicao_cabecotes': {
 			'esquerda': [1],					# 1
 			'direita': [16],					# 1
@@ -58,12 +62,37 @@ furadeiras = {
 			'superior': list(range(10, 16)),	# 6
 		},
 		'eixo_y': 'normal',						# normal ou invertido
-		'bipartido': {							# cabeçote {brocas}
-			2: [
-				[1, 2, 3, 4],
-				[5, 6, 7, 8],
-			]
-		},
+		'bipartido': True,
+	},
+	'F500-B': {
+		'marca': 'Lidear',
+		'nome': 'F500-B',
+		'nro_cabecotes': 16,
+		'nro_pinos': 21,
+		'distancia_pinos': 32,
+		'distancia_min_cabecotes': 96,
+		'bipartido': True,
+		'eixo_y': 'normal',						# normal ou invertido
+		'posicao_cabecotes': {
+			'esquerda': [1],					# 1
+			'direita': [16],					# 1
+			'inferior': list(range(2, 10)),		# 8
+			'superior': list(range(10, 16)),	# 6
+		},				
+		'dimensoes': {
+			'comprimento_peca': {				# x
+				'min': 115,
+				'max': 2750,
+			},
+			'largura_peca': {					# y
+				'min': 30,
+				'max': 870,
+			},
+			'espessura_peca': {					# z
+				'min': 8,
+				'max': 70,
+			},
+		}
 	}
 }
 # --------------------
@@ -73,7 +102,7 @@ furadeiras = {
 # --------------------
 nro_cabecotes = furadeiras[furadeira]['nro_cabecotes']
 posicao_cabecotes = furadeiras[furadeira]['posicao_cabecotes']
-nro_brocas = furadeiras[furadeira]['nro_brocas']
+nro_pinos = furadeiras[furadeira]['nro_pinos']
 distancia_pinos = furadeiras[furadeira]['distancia_pinos']
 eixo_y = furadeiras[furadeira]['eixo_y']
 # --------------------
@@ -81,24 +110,12 @@ eixo_y = furadeiras[furadeira]['eixo_y']
 
 # Cria furadeira
 # --------------------
-# furadeira = Furadeira(furadeiras[furadeira])
+furadeira = Furadeira(furadeiras[furadeira])
 # furadeira.imprimir_cabecotes()
 # --------------------
 
 
-# Criação dos cabeçotes
-# --------------------
-cabecotes = []
-for i in range(1, nro_cabecotes + 1):
-	for j in posicao_cabecotes:
-		if i in posicao_cabecotes[j]:
-			cabecote = Cabecote(i, nro_brocas, distancia_pinos, j)
-			cabecotes.append(cabecote)
-			break
-# --------------------
-
-
-# Criação de furos
+# Varrer arquivo e encontrar furos
 # --------------------
 furos = []
 array_furos = []
@@ -178,19 +195,8 @@ for line in file:
 			array_furos = []
 # --------------------
 
-
-# Imprimir tabela da peça
-# --------------------
-peca = PrettyTable()
-peca.title = nome
-peca.field_names = ['Dimensão', 'Valor (mm)']
-peca.align = 'l'
-peca._align['Valor (mm)'] = 'r'
-peca.add_row(['Comprimento (X)', lpx])
-peca.add_row(['Largura (Y)', lpy])
-peca.add_row(['Espessura (Z)', lpz])
-print(peca)
-# --------------------
+peca = Peca(nome, lpx, lpy, lpz)
+peca.imprimir_peca()
 
 
 # Imprimir tabela de dados de furos
@@ -211,45 +217,11 @@ print(data)
 # --------------------
 
 
-# for array in furos:
-# 	print(array)
-# exit()
 
 
-
-# Agrupar por side
-groups = defaultdict(list)
-for array in furos:
-	for furo in array:
-		groups[furo.side].append(array)
-		break
-furos = dict(groups.items())
-
-# Agrupa furos por alinhamento
-# for side in furos:
-# 	if side in ['0 : 0', '0 : 5']:
-# 		groups = defaultdict(list)
-# 		for array in furos[side]:
-# 			x_array = list(set(list(furo.x for furo in array)))
-# 			y_array = list(set(list(furo.y for furo in array)))
-
-# 			if len(x_array) == 1:
-# 				# Alinhado no eixo X
-# 				groups['alinhado_x'].append(array)
-# 				# groups[side].append(array)
-# 			elif len(y_array) == 1:
-# 				# Alinhado no eixo Y
-# 				groups['alinhado_y'].append(array)
-# 			else:
-# 				# Não alihado
-# 				groups['nao_alinhado'].append(array)
-# 		furos[side] = dict(groups.items())
-
-
-
-
-
-
+furadeira.distribuir_furos(furos)
+furadeira.imprimir_cabecotes()
+exit()
 # print(furos)
 
 
@@ -593,7 +565,7 @@ table.title = 'Cabeçotes'
 table.field_names = list(cabecote.nro for cabecote in cabecotes)
 
 # Brocas
-for i in range(1, nro_brocas + 1):
+for i in range(1, nro_pinos + 1):
 	table.add_row(list(cabecote.brocas[i] for cabecote in cabecotes))
 
 # Distancia x
@@ -607,7 +579,7 @@ table._field_names.insert(0, indice)
 table._align[indice] = 'c'
 table._valign[indice] = 't'
 for i, _ in enumerate(table._rows):
-	if i < nro_brocas:
+	if i < nro_pinos:
 		if eixo_y == 'invertido':
 			table._rows[i].insert(0, (len(table._rows) - 3 - i) * distancia_pinos)
 		else:

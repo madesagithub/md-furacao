@@ -89,7 +89,7 @@
 | 18		| Traseiro	    | 3		 		|								|
 | 19		| Traseiro  	| 4		 		|								|
 
-#### Furadeira-2
+#### Lidear: F400-T
 
 | Atributo					| Valor	|
 |--------------------------	|------	|
@@ -115,3 +115,29 @@
 | 14		| Superior  	| 5		 		|								|
 | 15		| Superior  	| 6		 		|								|
 | 16		| Topo direito  | 				| Final (x = medida da peça)	|
+
+### F500-B
+
+- Marca: Lidear
+- Nome: F500-B
+- Nro cabeçotes: 16
+- Nro brocas: 21
+- Distancia pinos: 32
+- Distancia min cabeçotes: 96
+- Bipartido: True
+- Eixo y: normal
+- Posicao cabeçotes:
+	- esquerda: [1]
+	- direita: [16]
+	- inferior: [2, 3, 4, 5, 6, 7, 8, 9]
+	- superior: [10, 11, 12, 13, 14, 15]			
+- Dimensões:
+	- espessura_peca:
+		- min: 8
+		- max: 70
+	- largura_peca:
+		- min: 30
+		- max: 870
+	- comprimento_peca:
+		- min: 115
+		- max: 2750
