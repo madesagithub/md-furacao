@@ -1,3 +1,4 @@
+import math
 from prettytable import PrettyTable
 from collections import defaultdict
 from typing import OrderedDict
@@ -139,35 +140,50 @@ class Furadeira:
 					# for array in furos[side]['alinhado_y']:
 					# 	for furo in array:
 
-					
-					
 					# Agrupar por x
 					groups = defaultdict(list)
-					for array in furos[side]['alinhado_x']:
+					for array in furos[side]['alinhado_y']:
+						ponto_x = []
 						for furo in array:
-							groups[furo.x].append(furo)
+							ponto_x.append(furo.x)
+
+						# Encontrar ponto médio em x para furação
+						# if len(ponto_x) == 2:
+							# Se a quantidade de furos na horizontal for 2 
+							# (separados pela distancia de da broca), ao invés de girar o cabeçote
+							# pode ser adicionado o agregado (ÚLTIMO RECURSO)
+
+							# Adicionar agregado
+							# middle = min(ponto_x)
+						# 	continue
+						# else:
+						middle = min(ponto_x) + math.floor(len(ponto_x) / 2) * self.distancia_pinos
+
+						groups[middle] = array
 					groups = dict(groups.items())
 
 					# Ordenar
 					groups = dict(OrderedDict(sorted(groups.items())))
-					furos[side]['alinhado_x'] = groups
+					furos[side]['alinhado_y'] = groups
 
-				print(furos[side])
-				exit()
 
 				# Selecionar o cabeçotes
-				for x in groups:
+				for alinhamento in furos[side]:
+					for x in furos[side][alinhamento]:
+						for cabecote in self.cabecotes:
+							if cabecote.posicao == posicao and cabecote.used == False:
+								break
 
-					for cabecote in self.cabecotes:
-						if cabecote.posicao == posicao and cabecote.used == False:
-							break
+						cabecote.use()
+						cabecote.setX(x)
 
-					cabecote.use()
-					cabecote.setX(x)
+						if alinhamento == 'alinhado_y':
+							cabecote.setBipartido(True)
 
-					# Aplica os furos
-					for furo in groups[x]:
-						cabecote.setBroca(furo, self.eixo_y)
+						# Aplica os furos
+						for furo in furos[side][alinhamento][x]:
+							cabecote.setBroca(furo, self.eixo_y)
+
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
 	def ordenar_cabeocotes(self):
@@ -182,7 +198,15 @@ class Furadeira:
 
 		# Brocas
 		for pino in range(1, self.nro_pinos + 1):
-			table.add_row(list(cabecote.brocas[pino] for cabecote in self.cabecotes))
+			for cabecote in self.cabecotes:
+				# array = array()
+				if cabecote.bipartido:
+					if pino == math.ceil(self.nro_pinos / 4) or pino == math.floor(self.nro_pinos / (3/4)):
+						continue
+
+			
+			# table.add_row(array)
+			table.add_row(list(cabecote.pinos[pino] for cabecote in self.cabecotes))
 
 		# Distancia x
 		table.add_row(list('---' for cabecote in self.cabecotes))

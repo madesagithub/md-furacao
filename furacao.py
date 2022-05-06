@@ -20,7 +20,7 @@ filename = 'TAMPO MAL 15X440X2280.bpp'
 filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'
 filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'
 filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'
-filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'	# Complexo
+filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
 dir = os.path.dirname(__file__) + '/Peças/'
 file = open(dir + filename, 'r', encoding='latin1')
 # --------------------
@@ -55,23 +55,27 @@ furadeiras = {
 		'nro_pinos': 21,
 		'distancia_pinos': 32,
 		'distancia_min_cabecotes': 96,
+		'bipartido': False,
+		'agregado': False,
+		'batente_fundo': True,
+		'eixo_y': 'normal',						# normal ou invertido
 		'posicao_cabecotes': {
 			'esquerda': [1],					# 1
 			'direita': [16],					# 1
 			'inferior': list(range(2, 10)),		# 8
 			'superior': list(range(10, 16)),	# 6
 		},
-		'eixo_y': 'normal',						# normal ou invertido
-		'bipartido': True,
 	},
 	'F500-B': {
 		'marca': 'Lidear',
 		'nome': 'F500-B',
 		'nro_cabecotes': 16,
-		'nro_pinos': 21,
+		'nro_pinos': 22,
 		'distancia_pinos': 32,
 		'distancia_min_cabecotes': 96,
 		'bipartido': True,
+		'agregado': True,
+		'batente_fundo': True,
 		'eixo_y': 'normal',						# normal ou invertido
 		'posicao_cabecotes': {
 			'esquerda': [1],					# 1
@@ -195,6 +199,9 @@ for line in file:
 			array_furos = []
 # --------------------
 
+
+# Imprimir tabela de dados da peça
+# --------------------
 peca = Peca(nome, lpx, lpy, lpz)
 peca.imprimir_peca()
 

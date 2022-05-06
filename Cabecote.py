@@ -34,6 +34,9 @@ class Cabecote:
 	def use(self):
 		self.used = True
 
+	def setBipartido(self, bool):
+		self.bipartido = bool
+
 	def imprimir_cabecote(self):
 		table = PrettyTable()
 		table.title = 'Cabeçote Nro ' + str(self.nro)
