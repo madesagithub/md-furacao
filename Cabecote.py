@@ -7,6 +7,7 @@ class Cabecote:
 		self.distancia_pinos = distancia_pinos
 		self.posicao = posicao
 		self.bipartido = bipartido
+		self.used_bipartido = False
 		self.x = 0
 		self.deslocamento_x = 0
 		self.used = False
@@ -36,6 +37,9 @@ class Cabecote:
 
 	def setBipartido(self, bool):
 		self.bipartido = bool
+
+	def setUsedBipartido(self, bool):
+		self.used_bipartido = bool
 
 	def imprimir_cabecote(self):
 		table = PrettyTable()

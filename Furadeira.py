@@ -120,6 +120,8 @@ class Furadeira:
 
 				furos[side] = dict(groups.items())
 				
+				# Furos alinhados no eixo X
+				# -------------------------------------------------
 				if 'alinhado_x' in furos[side]:
 					# Agrupar por x
 					groups = defaultdict(list)
@@ -132,14 +134,9 @@ class Furadeira:
 					groups = dict(OrderedDict(sorted(groups.items())))
 					furos[side]['alinhado_x'] = groups
 
+				# Furos alinhados no eixo Y
+				# -------------------------------------------------
 				if 'alinhado_y' in furos[side]:
-					
-
-					# Agrupar por x
-					# groups = defaultdict(list)
-					# for array in furos[side]['alinhado_y']:
-					# 	for furo in array:
-
 					# Agrupar por x
 					groups = defaultdict(list)
 					for array in furos[side]['alinhado_y']:
@@ -168,6 +165,7 @@ class Furadeira:
 
 
 				# Selecionar o cabeçotes
+				# -------------------------------------------------
 				for alinhamento in furos[side]:
 					for x in furos[side][alinhamento]:
 						for cabecote in self.cabecotes:
@@ -178,7 +176,7 @@ class Furadeira:
 						cabecote.setX(x)
 
 						if alinhamento == 'alinhado_y':
-							cabecote.setBipartido(True)
+							cabecote.setUsedBipartido(True)
 
 						# Aplica os furos
 						for furo in furos[side][alinhamento][x]:
@@ -198,15 +196,44 @@ class Furadeira:
 
 		# Brocas
 		for pino in range(1, self.nro_pinos + 1):
+			
+			row = list()
 			for cabecote in self.cabecotes:
-				# array = array()
-				if cabecote.bipartido:
-					if pino == math.ceil(self.nro_pinos / 4) or pino == math.floor(self.nro_pinos / (3/4)):
-						continue
+				if cabecote.used_bipartido:
+					if pino in [math.ceil(self.nro_pinos * (1/4)), math.ceil(self.nro_pinos * (3/4))]:
+						
+						# print(list(cabecote.pinos[1]))
+						# fila_dividida = list(cabecote.pinos)[
+						# 	int(((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2))) 
+						# 	: 
+						# 	int((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2) + (self.nro_pinos / 2))
+						# ]
+
+						array = []
+						for rotacionado in list(cabecote.pinos)[
+								int(((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2))) 
+								: 
+								int((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2) + (self.nro_pinos / 2))
+							]:
+							
+							array.append(cabecote.pinos[rotacionado])
+
+						line = ' '.join(array)
+						row.append(line)
+
+						# row.append(fila_dividida)
+					else:
+						row.append(' ')
+				else:
+					row.append(cabecote.pinos[pino])
+
+
+			# table.add_row(list(cabecote.pinos[pino] for cabecote in self.cabecotes))
+			table.add_row(row)
+				
 
 			
-			# table.add_row(array)
-			table.add_row(list(cabecote.pinos[pino] for cabecote in self.cabecotes))
+
 
 		# Distancia x
 		table.add_row(list('---' for cabecote in self.cabecotes))
