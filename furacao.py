@@ -228,6 +228,7 @@ print(data)
 
 furadeira.distribuir_furos(furos)
 furadeira.imprimir_cabecotes()
+# furadeira.imprimir_cabecote(8)
 exit()
 # print(furos)
 

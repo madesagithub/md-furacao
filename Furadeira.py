@@ -33,6 +33,7 @@ class Furadeira:
 					cabecote = Cabecote(nro,
 						self.nro_pinos,
 						self.distancia_pinos,
+						self.distancia_min_cabecotes,
 						posicao,
 						self.bipartido)
 					cabecotes.append(cabecote)
@@ -120,48 +121,25 @@ class Furadeira:
 
 				furos[side] = dict(groups.items())
 				
-				# Furos alinhados no eixo X
+				# Furos alinhados no eixo X e Y
 				# -------------------------------------------------
-				if 'alinhado_x' in furos[side]:
-					# Agrupar por x
-					groups = defaultdict(list)
-					for array in furos[side]['alinhado_x']:
-						for furo in array:
-							groups[furo.x].append(furo)
-					groups = dict(groups.items())
+				for alinhamento in ['alinhado_x', 'alinhado_y']:
+					if alinhamento in furos[side]:
+						# Agrupar por x
+						groups = defaultdict(list)
+						for array in furos[side][alinhamento]:
+							for furo in array:
+								middle = self.defineMiddleX(array)
+								groups[middle].append(furo)
 
-					# Ordenar
-					groups = dict(OrderedDict(sorted(groups.items())))
-					furos[side]['alinhado_x'] = groups
+						groups = dict(groups.items())
 
-				# Furos alinhados no eixo Y
-				# -------------------------------------------------
-				if 'alinhado_y' in furos[side]:
-					# Agrupar por x
-					groups = defaultdict(list)
-					for array in furos[side]['alinhado_y']:
-						ponto_x = []
-						for furo in array:
-							ponto_x.append(furo.x)
+						# Ordenar
+						groups = dict(OrderedDict(sorted(groups.items())))
+						furos[side][alinhamento] = groups
 
-						# Encontrar ponto médio em x para furação
-						# if len(ponto_x) == 2:
-							# Se a quantidade de furos na horizontal for 2 
-							# (separados pela distancia de da broca), ao invés de girar o cabeçote
-							# pode ser adicionado o agregado (ÚLTIMO RECURSO)
-
-							# Adicionar agregado
-							# middle = min(ponto_x)
-						# 	continue
-						# else:
-						middle = min(ponto_x) + math.floor(len(ponto_x) / 2) * self.distancia_pinos
-
-						groups[middle] = array
-					groups = dict(groups.items())
-
-					# Ordenar
-					groups = dict(OrderedDict(sorted(groups.items())))
-					furos[side]['alinhado_y'] = groups
+				# print(furos)
+				# exit()
 
 
 				# Selecionar o cabeçotes
@@ -182,10 +160,60 @@ class Furadeira:
 						for furo in furos[side][alinhamento][x]:
 							cabecote.setBroca(furo, self.eixo_y)
 
+		self.ordenar_cabecotes()
+
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
-	def ordenar_cabeocotes(self):
-		distancia_x = list(cabecote.x for cabecote in self.cabecotes)
+	def ordenar_cabecotes(self):
+
+		for side in ['inferior', 'superior']:
+			cabecotes = list(
+				cabecote for cabecote in self.cabecotes 
+				if cabecote.posicao == side and cabecote.used)
+
+			if (len(cabecotes) > 0):
+				distancia_x = list(cabecote.x for cabecote in cabecotes)
+				distancia_x.sort()
+
+				print(cabecotes)
+				print(distancia_x)
+
+				for i, cabecote in enumerate(cabecotes):
+					print(i, cabecote, distancia_x[i])
+					if (cabecote.x != distancia_x[i]):
+						self.setCabecoteNro(cabecote, i)
+					# 	cabecote.setX(distancia_x[i])
+					# cabecote.setX(min(distancia_x))
+					# distancia_x.remove(cabecote.x)
+
+	def setCabecoteNro(self, cabecote, new_nro):
+		if new_nro > cabecote.nro:
+			for i in range(cabecote.nro, new_nro):
+				self.cabecotes[i - 1].setNro(i)
+
+			cabecote.setNro(new_nro)
+
+	# Define o ponto X que os furos deverão ser aplicados
+	def defineMiddleX(self, furos):
+		ponto_x = []
+		for furo in furos:
+			ponto_x.append(furo.x)
+
+		ponto_x = list(set(ponto_x))
+
+		# Encontrar ponto médio em x para furação
+		# if len(ponto_x) == 2:
+			# Se a quantidade de furos na horizontal for 2 
+			# (separados pela distancia de da broca), ao invés de girar o cabeçote
+			# pode ser adicionado o agregado (ÚLTIMO RECURSO)
+
+			# Adicionar agregado
+			# middle = min(ponto_x)
+		# 	continue
+		# else:
+		middle = min(ponto_x) + (len(ponto_x) // 2) * self.distancia_pinos
+
+		return middle
 
 	# Imprimir tabela de cabeçotes
 	def imprimir_cabecotes(self):
@@ -237,7 +265,24 @@ class Furadeira:
 
 		# Distancia x
 		table.add_row(list('---' for cabecote in self.cabecotes))
-		table.add_row(list(cabecote.x for cabecote in self.cabecotes))
+		# Limites
+		row = []
+		for cabecote in self.cabecotes:
+			if cabecote.used_bipartido:
+				string = str(cabecote.limite['start']) + ' ← ' + str(cabecote.x) + ' → ' + str(cabecote.limite['end'])
+				row.append(string)
+			else:
+				row.append(cabecote.x)
+		table.add_row(row)
+		# Limites totais
+		row = []
+		for cabecote in self.cabecotes:
+			if cabecote.used:
+				string = str(cabecote.limite['start']) + ' ↔ ' + str(cabecote.limite['end'])
+			else:
+				string = ' '
+			row.append(string)
+		# table.add_row(row)
 		table.add_row(list(cabecote.posicao[0:3] for cabecote in self.cabecotes))
 
 		# Índice
@@ -255,3 +300,9 @@ class Furadeira:
 				table._rows[i].insert(0, '')
 
 		print(table)
+
+	# Imprimir tabela de cabeçotes
+	def imprimir_cabecote(self, nro):
+
+		cabecote = self.cabecotes[nro - 1]
+		cabecote.imprimir_cabecote()
