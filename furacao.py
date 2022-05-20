@@ -310,7 +310,7 @@ for side in furos:
 		print(furos[side])
 		exit()
 
-		# Provávelmente não haverá casos onde x tenha multiplos e não multiplos
+		# Provavelmente não haverá casos onde x tenha multiplos e não multiplos
 		# Agrupar por múltiplos de distancia_pinos
 		# groups_x_dp = {}
 		# for x in list(groups_x.keys()):
@@ -474,7 +474,7 @@ for side in furos:
 		# Ordenar
 		groups = dict(OrderedDict(sorted(groups.items())))
 
-		# Provávelmente não haverá casos onde x tenha multiplos e não multiplos
+		# Provavelmente não haverá casos onde x tenha multiplos e não multiplos
 		# Agrupar por múltiplos de distancia_pinos
 		# groups_x_dp = {}
 		# for x in list(groups_x.keys()):
