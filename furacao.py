@@ -72,7 +72,10 @@ furadeiras = {
 		'nro_cabecotes': 16,
 		'nro_pinos': 22,
 		'distancia_pinos': 32,
-		'distancia_min_cabecotes': 96,
+		'distancia_min_cabecotes': {
+			'normal': 96,
+			'bipartido': 50,
+		},
 		'bipartido': True,
 		'agregado': True,
 		'batente_fundo': True,

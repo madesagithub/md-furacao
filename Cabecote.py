@@ -66,8 +66,8 @@ class Cabecote():
 
 	def	setLimite(self):
 		self.limite = {}
-		self.limite['start'] = max(0, self.x - self.distancia_min_cabecotes)
-		self.limite['end'] = self.x + self.distancia_min_cabecotes
+		self.limite['start'] = max(0, self.x - self.distancia_min_cabecotes['normal'])
+		self.limite['end'] = self.x + self.distancia_min_cabecotes['normal']
 
 	def use(self):
 		self.used = True
@@ -83,14 +83,26 @@ class Cabecote():
 	# Adiciona o furo para a lista
 	def addFuro(self, furo):
 		self.furos.append(furo)
+
+	# Adicionar os furos ao cabeçote
+	def setFuros(self, furos):
+		
+		for furo in furos:
+			self.addFuro(furo)
+
 		self.definePassante()
+
+		self.furos = furos
 
 	# Define se o cabeçote tem a possibilidade de ser bipartido
 	def setBipartido(self, bool):
 		self.bipartido = bool
 
 		if bool:
-			self.pinos_rotacao = [math.ceil(self.nro_pinos * (1/4)), math.ceil(self.nro_pinos * (3/4))]
+			self.pinos_rotacao = [
+				math.ceil(self.nro_pinos * (1/4)),
+				math.ceil(self.nro_pinos * (3/4))
+			]
 
 	# Define se o cabeçote está usando a bipartição
 	def setUsedBipartido(self, bool):

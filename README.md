@@ -2,9 +2,13 @@
 
 
 ## Roadmap
-- [x] Varrer arquivo .bpp
+- [x] Ler arquivo .bpp
+	- [x] Obter informções sobre a peça
+	- [x] Obter lista de furos, agrupados conforme o cabeçote
 - [ ] Cadastro de furadeiras:
 	- [ ] Cadastro geral
+		- [x] Lidear F500-B
+		- [ ] Lidear F400-T
 	- [ ] Edição de atributos no momento da utilização
 - [x] Agrupar furos que utilizarão o mesmo cabeçote
 - [ ] Aplicar furos em cabeçote:
