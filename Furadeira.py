@@ -1,4 +1,3 @@
-import math
 from prettytable import PrettyTable
 from collections import defaultdict
 from typing import OrderedDict
@@ -14,9 +13,12 @@ class Furadeira:
 		self.distancia_pinos = array['distancia_pinos']
 		self.distancia_min_cabecotes = array['distancia_min_cabecotes']
 		self.posicao_cabecotes = array['posicao_cabecotes']
+		self.batente_fundo = array['batente_fundo']
 		self.eixo_y = array['eixo_y']
 		self.bipartido = array['bipartido']
 
+		# ----------
+		self.posicoes = list(self.posicao_cabecotes.keys())
 		self.deslocamento_y = 0
 
 		self.criar_cabecotes()
@@ -68,7 +70,7 @@ class Furadeira:
 		# 				# Alinhado no eixo Y
 		# 				groups['alinhado_y'].append(array)
 		# 			else:
-		# 				# Não alihado
+		# 				# Não alinhado
 		# 				groups['nao_alinhado'].append(array)
 		# 		furos[side] = dict(groups.items())
 
@@ -116,12 +118,12 @@ class Furadeira:
 						groups['alinhado_y'].append(array)
 
 					else:
-						# Não alihado
+						# Não alinhado
 						groups['nao_alinhado'].append(array)
 
 				furos[side] = dict(groups.items())
 				
-				# Furos alinhados no eixo X e Y
+				# Furos alinhados nos eixos X e Y
 				# -------------------------------------------------
 				for alinhamento in ['alinhado_x', 'alinhado_y']:
 					if alinhamento in furos[side]:
@@ -158,40 +160,30 @@ class Furadeira:
 
 						# Aplica os furos
 						for furo in furos[side][alinhamento][x]:
-							cabecote.setBroca(furo, self.eixo_y)
+							cabecote.setPino(furo, self.eixo_y)
 
 		self.ordenar_cabecotes()
 
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
 	def ordenar_cabecotes(self):
-
-		for side in ['inferior', 'superior']:
+		for posicao in self.posicoes:
 			cabecotes = list(
 				cabecote for cabecote in self.cabecotes 
-				if cabecote.posicao == side and cabecote.used)
+				if cabecote.posicao == posicao and cabecote.used)
+
+			# Ordena os cabeçotes conforme X
+			cabecotes.sort(key=lambda cabecote: cabecote.x)
 
 			if (len(cabecotes) > 0):
-				distancia_x = list(cabecote.x for cabecote in cabecotes)
-				distancia_x.sort()
-
-				print(cabecotes)
-				print(distancia_x)
+				cabecotes_nro = list(cabecote.nro for cabecote in cabecotes)
+				cabecotes_nro.sort()
 
 				for i, cabecote in enumerate(cabecotes):
-					print(i, cabecote, distancia_x[i])
-					if (cabecote.x != distancia_x[i]):
-						self.setCabecoteNro(cabecote, i)
-					# 	cabecote.setX(distancia_x[i])
-					# cabecote.setX(min(distancia_x))
-					# distancia_x.remove(cabecote.x)
+					if cabecote.nro != cabecotes_nro[i]:
+						cabecote.setNro(cabecotes_nro[i])
 
-	def setCabecoteNro(self, cabecote, new_nro):
-		if new_nro > cabecote.nro:
-			for i in range(cabecote.nro, new_nro):
-				self.cabecotes[i - 1].setNro(i)
-
-			cabecote.setNro(new_nro)
+		self.cabecotes.sort(key=lambda cabecote: cabecote.nro)
 
 	# Define o ponto X que os furos deverão ser aplicados
 	def defineMiddleX(self, furos):
@@ -228,14 +220,7 @@ class Furadeira:
 			row = list()
 			for cabecote in self.cabecotes:
 				if cabecote.used_bipartido:
-					if pino in [math.ceil(self.nro_pinos * (1/4)), math.ceil(self.nro_pinos * (3/4))]:
-						
-						# print(list(cabecote.pinos[1]))
-						# fila_dividida = list(cabecote.pinos)[
-						# 	int(((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2))) 
-						# 	: 
-						# 	int((pino // (self.nro_pinos / 2)) * (self.nro_pinos / 2) + (self.nro_pinos / 2))
-						# ]
+					if pino in cabecote.pinos_rotacao:
 
 						array = []
 						for rotacionado in list(cabecote.pinos)[
@@ -258,13 +243,10 @@ class Furadeira:
 
 			# table.add_row(list(cabecote.pinos[pino] for cabecote in self.cabecotes))
 			table.add_row(row)
-				
-
-			
-
 
 		# Distancia x
-		table.add_row(list('---' for cabecote in self.cabecotes))
+		line = '-----'
+		table.add_row(list(line for cabecote in self.cabecotes))
 		# Limites
 		row = []
 		for cabecote in self.cabecotes:
@@ -274,6 +256,8 @@ class Furadeira:
 			else:
 				row.append(cabecote.x)
 		table.add_row(row)
+		# Deslocamento Y
+		table.add_row(list(cabecote.deslocamento_y for cabecote in self.cabecotes))
 		# Limites totais
 		row = []
 		for cabecote in self.cabecotes:
@@ -285,10 +269,10 @@ class Furadeira:
 		# table.add_row(row)
 		table.add_row(list(cabecote.posicao[0:3] for cabecote in self.cabecotes))
 
-		# Índice
+		# Índice 1
 		indice = ''
 		table._field_names.insert(0, indice)
-		table._align[indice] = 'c'
+		table._align[indice] = 'r'
 		table._valign[indice] = 't'
 		for i, _ in enumerate(table._rows):
 			if i < self.nro_pinos:
@@ -296,13 +280,37 @@ class Furadeira:
 					table._rows[i].insert(0, (len(table._rows) - 3 - i) * self.distancia_pinos)
 				else:
 					table._rows[i].insert(0, (i+1) * self.distancia_pinos)
+			elif i == self.nro_pinos:
+				table._rows[i].insert(0, line)
+			elif i == self.nro_pinos + 1:
+				table._rows[i].insert(0, 'pos_x')
+			elif i == self.nro_pinos + 2:
+				table._rows[i].insert(0, 'des_y')
+			else:
+				table._rows[i].insert(0, '')
+
+		# Índice 2
+		table._field_names.insert(0, indice)
+		for i, _ in enumerate(table._rows):
+			if i < self.nro_pinos:
+				table._rows[i].insert(0, (i+1))
+			elif i == self.nro_pinos:
+				table._rows[i].insert(0, line)
 			else:
 				table._rows[i].insert(0, '')
 
 		print(table)
 
-	# Imprimir tabela de cabeçotes
+	# Imprimir tabela de cabeçote específico
 	def imprimir_cabecote(self, nro):
-
 		cabecote = self.cabecotes[nro - 1]
 		cabecote.imprimir_cabecote()
+
+	def imprimir_furadeira(self):
+		table = PrettyTable()
+		table.title = self.marca + ' ' + self.nome
+		table.field_names = list(['Atributo', 'Valor'])
+		for var in vars(self):
+			if var != 'cabecotes':
+				table.add_row([var, vars(self)[var]])
+		print(table)

@@ -2,8 +2,27 @@
 
 
 ## Roadmap
+- [x] Varrer arquivo .bpp
+- [ ] Cadastro de furadeiras:
+	- [ ] Cadastro geral
+	- [ ] Edição de atributos no momento da utilização
+- [x] Agrupar furos que utilizarão o mesmo cabeçote
+- [ ] Aplicar furos em cabeçote:
+	- [ ] Definir pino
+		- [x] Cabeçote inteiro
+		- [ ] Cabeçote bipartido
+	- [ ] Definir deslocamento(X) do cabeçote:
+		- [x] Cabeçote inteiro
+		- [ ] Cabeçote bipartido:
+			- [ ] Definir limites de deslocamento(X)
+			- [ ] Considerar possibilidade de troca por um cabeçote menor
+	- [ ] Definir deslocamento(Y) do cabeçote:
+		- [x] Cabeçote inteiro
+		- [ ] Cabeçote bipartido
+			- [ ] Considerar opção de deslocamento(Y) do eixo rotacionado
+- [ ] Definir deslocamento(Y) da furadeira
 - [ ] Automatizar a informação das informações de furação.
-- [ ] Criar mecanismo automático que crie padrão de furação para as furadeiras lidear através da interação dos softwares Ardis e Topsolid.
+- [ ] Criar mecanismo automático que crie padrão de furação para as furadeiras Lidear através da interação dos softwares Ardis e Topsolid.
 - [ ] Criar interface gráfica para consulta das informações na máquina.
 
 
@@ -131,13 +150,13 @@
 	- direita: [16]
 	- inferior: [2, 3, 4, 5, 6, 7, 8, 9]
 	- superior: [10, 11, 12, 13, 14, 15]			
-- Dimensões:
-	- espessura_peca:
+- Dimensões da peça:
+	- espessura:
 		- min: 8
 		- max: 70
-	- largura_peca:
+	- largura:
 		- min: 30
 		- max: 870
-	- comprimento_peca:
+	- comprimento:
 		- min: 115
 		- max: 2750

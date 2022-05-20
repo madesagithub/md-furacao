@@ -2,9 +2,9 @@ from prettytable import PrettyTable
 
 class Peca:
 	def __init__(self, nome, comprimento, largura, espessura):
-		self.nome = nome,
-		self.comprimento = comprimento,
-		self.largura = largura,
+		self.nome = nome
+		self.comprimento = comprimento
+		self.largura = largura
 		self.espessura = espessura
 
 	def imprimir_peca(self):

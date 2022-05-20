@@ -83,16 +83,16 @@ furadeiras = {
 			'inferior': list(range(2, 10)),		# 8
 			'superior': list(range(10, 16)),	# 6
 		},				
-		'dimensoes': {
-			'comprimento_peca': {				# x
+		'dimensoes_peca': {
+			'comprimento': {					# x
 				'min': 115,
 				'max': 2750,
 			},
-			'largura_peca': {					# y
+			'largura': {						# y
 				'min': 30,
 				'max': 870,
 			},
-			'espessura_peca': {					# z
+			'espessura': {						# z
 				'min': 8,
 				'max': 70,
 			},
@@ -226,9 +226,10 @@ print(data)
 
 
 
+furadeira.imprimir_furadeira()
 furadeira.distribuir_furos(furos)
 furadeira.imprimir_cabecotes()
-# furadeira.imprimir_cabecote(8)
+furadeira.imprimir_cabecote(5)
 exit()
 # print(furos)
 
@@ -279,7 +280,7 @@ for side in furos:
 				# Alinhado no eixo Y
 				groups['alinhado_y'].append(array)
 			else:
-				# Não alihado
+				# Não alinhado
 				groups['nao_alinhado'].append(array)
 		furos[side] = dict(groups.items())
 		
@@ -329,7 +330,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[x]:
-				cabecote.setBroca(furo, eixo_y)
+				cabecote.setPino(furo, eixo_y)
 
 
 
@@ -493,7 +494,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[x]:
-				cabecote.setBroca(furo, eixo_y)
+				cabecote.setPino(furo, eixo_y)
 
 
 	# Esquerda
@@ -527,7 +528,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[y]:
-				cabecote.setBroca(furo, eixo_y, 'x')
+				cabecote.setPino(furo, eixo_y, 'x')
 
 
 	# Traseira
