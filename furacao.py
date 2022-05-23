@@ -7,10 +7,10 @@ import pandas as pd
 from prettytable import PrettyTable
 from collections import defaultdict
 
-from Furadeira import Furadeira
-from Cabecote import Cabecote
-from Furo import Furo
-from Peca import Peca
+from furadeiras import furadeiras	# lista de furadeiras
+from Furadeira import Furadeira		# classe Furadeira
+from Furo import Furo				# classe Furo
+from Peca import Peca				# classe Peca		
 
 
 # Arquivo
@@ -29,79 +29,6 @@ file = open(dir + filename, 'r', encoding='latin1')
 # Variáveis de configuração
 # --------------------
 furadeira = 'F500-B'
-
-# Configuração de furadeiras
-furadeiras = {
-	'furadeira-1': {
-		'marca': 'marca',
-		'nome': 'nome',
-		'nro_cabecotes': 19,
-		'nro_pinos': 21,
-		'distancia_pinos': 32,
-		'posicao_cabecotes': {
-			'esquerda': [1],					# 1
-			'direita': [10],					# 1
-			'inferior': list(range(2, 10)),		# 8
-			'superior': list(range(11, 16)),	# 5
-			'traseiro': list(range(16, 20)),	# 4
-		},
-		'eixo_y': 'invertido',					# normal ou invertido
-		'bipartido': False,
-	},
-	'F400-T': {
-		'marca': 'Lidear',
-		'nome': 'F400-T',
-		'nro_cabecotes': 16,
-		'nro_pinos': 21,
-		'distancia_pinos': 32,
-		'distancia_min_cabecotes': 96,
-		'bipartido': False,
-		'agregado': False,
-		'batente_fundo': True,
-		'eixo_y': 'normal',						# normal ou invertido
-		'posicao_cabecotes': {
-			'esquerda': [1],					# 1
-			'direita': [16],					# 1
-			'inferior': list(range(2, 10)),		# 8
-			'superior': list(range(10, 16)),	# 6
-		},
-	},
-	'F500-B': {
-		'marca': 'Lidear',
-		'nome': 'F500-B',
-		'nro_cabecotes': 16,
-		'nro_pinos': 22,
-		'distancia_pinos': 32,
-		'distancia_min_cabecotes': {
-			'normal': 96,
-			'bipartido': 50,
-		},
-		'bipartido': True,
-		'agregado': True,
-		'batente_fundo': True,
-		'eixo_y': 'normal',						# normal ou invertido
-		'posicao_cabecotes': {
-			'esquerda': [1],					# 1
-			'direita': [16],					# 1
-			'inferior': list(range(2, 10)),		# 8
-			'superior': list(range(10, 16)),	# 6
-		},				
-		'dimensoes_peca': {
-			'comprimento': {					# x
-				'min': 115,
-				'max': 2750,
-			},
-			'largura': {						# y
-				'min': 30,
-				'max': 870,
-			},
-			'espessura': {						# z
-				'min': 8,
-				'max': 70,
-			},
-		}
-	}
-}
 # --------------------
 
 
@@ -109,8 +36,8 @@ furadeiras = {
 # --------------------
 nro_cabecotes = furadeiras[furadeira]['nro_cabecotes']
 posicao_cabecotes = furadeiras[furadeira]['posicao_cabecotes']
-nro_pinos = furadeiras[furadeira]['nro_pinos']
-distancia_pinos = furadeiras[furadeira]['distancia_pinos']
+nro_mandris = furadeiras[furadeira]['nro_mandris']
+distancia_mandris = furadeiras[furadeira]['distancia_mandris']
 eixo_y = furadeiras[furadeira]['eixo_y']
 # --------------------
 
@@ -311,12 +238,12 @@ for side in furos:
 		exit()
 
 		# Provavelmente não haverá casos onde x tenha multiplos e não multiplos
-		# Agrupar por múltiplos de distancia_pinos
+		# Agrupar por múltiplos de distancia_mandris
 		# groups_x_dp = {}
 		# for x in list(groups_x.keys()):
 		# 	groups_x_dp[x] = {'multiplos': [], 'não multiplos': []}
 		# 	for furo in groups_x[x]:
-		# 		if furo.y % distancia_pinos == 0:
+		# 		if furo.y % distancia_mandris == 0:
 		# 			groups_x_dp[x]['multiplos'].append(furo)
 		# 		else:
 		# 			groups_x_dp[x]['não multiplos'].append(furo)
@@ -333,7 +260,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[x]:
-				cabecote.setPino(furo, eixo_y)
+				cabecote.setMandril(furo, eixo_y)
 
 
 
@@ -475,12 +402,12 @@ for side in furos:
 		groups = dict(OrderedDict(sorted(groups.items())))
 
 		# Provavelmente não haverá casos onde x tenha multiplos e não multiplos
-		# Agrupar por múltiplos de distancia_pinos
+		# Agrupar por múltiplos de distancia_mandris
 		# groups_x_dp = {}
 		# for x in list(groups_x.keys()):
 		# 	groups_x_dp[x] = {'multiplos': [], 'não multiplos': []}
 		# 	for furo in groups_x[x]:
-		# 		if furo.y % distancia_pinos == 0:
+		# 		if furo.y % distancia_mandris == 0:
 		# 			groups_x_dp[x]['multiplos'].append(furo)
 		# 		else:
 		# 			groups_x_dp[x]['não multiplos'].append(furo)
@@ -497,7 +424,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[x]:
-				cabecote.setPino(furo, eixo_y)
+				cabecote.setMandril(furo, eixo_y)
 
 
 	# Esquerda
@@ -531,7 +458,7 @@ for side in furos:
 
 			# Aplica os furos
 			for furo in groups[y]:
-				cabecote.setPino(furo, eixo_y, 'x')
+				cabecote.setMandril(furo, eixo_y, 'x')
 
 
 	# Traseira
@@ -577,7 +504,7 @@ table.title = 'Cabeçotes'
 table.field_names = list(cabecote.nro for cabecote in cabecotes)
 
 # Brocas
-for i in range(1, nro_pinos + 1):
+for i in range(1, nro_mandris + 1):
 	table.add_row(list(cabecote.brocas[i] for cabecote in cabecotes))
 
 # Distancia x
@@ -591,11 +518,11 @@ table._field_names.insert(0, indice)
 table._align[indice] = 'c'
 table._valign[indice] = 't'
 for i, _ in enumerate(table._rows):
-	if i < nro_pinos:
+	if i < nro_mandris:
 		if eixo_y == 'invertido':
-			table._rows[i].insert(0, (len(table._rows) - 3 - i) * distancia_pinos)
+			table._rows[i].insert(0, (len(table._rows) - 3 - i) * distancia_mandris)
 		else:
-			table._rows[i].insert(0, (i+1) * distancia_pinos)
+			table._rows[i].insert(0, (i+1) * distancia_mandris)
 	else:
 		table._rows[i].insert(0, '')
 

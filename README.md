@@ -12,7 +12,7 @@
 	- [ ] Edição de atributos no momento da utilização
 - [x] Agrupar furos que utilizarão o mesmo cabeçote
 - [ ] Aplicar furos em cabeçote:
-	- [ ] Definir pino
+	- [ ] Definir mandril
 		- [x] Cabeçote inteiro
 		- [ ] Cabeçote bipartido
 	- [ ] Definir deslocamento(X) do cabeçote:
@@ -88,7 +88,7 @@
 |--------------------------	|------	|
 | Número de cabeçotes		| 19	|
 | Número de brocas			| 21	|
-| Distância entre os pinos	| 32	|
+| Distância entre os mandris	| 32	|
 
 | Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
 |---------- |-------------- |-------------- |------------------------------ |
@@ -118,7 +118,7 @@
 |--------------------------	|------	|
 | Número de cabeçotes		| 19	|
 | Número de brocas			| 21	|
-| Distância entre os pinos	| 32	|
+| Distância entre os mandris	| 32	|
 
 | Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
 |---------- |-------------- |-------------- |------------------------------ |
@@ -145,7 +145,7 @@
 - Nome: F500-B
 - Nro cabeçotes: 16
 - Nro brocas: 21
-- Distancia pinos: 32
+- Distancia mandris: 32
 - Distancia min cabeçotes: 96
 - Bipartido: True
 - Eixo y: normal

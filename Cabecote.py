@@ -2,10 +2,10 @@ import math
 from prettytable import PrettyTable
 
 class Cabecote():
-	def __init__(self, nro, nro_pinos, distancia_pinos, distancia_min_cabecotes, posicao, bipartido):
+	def __init__(self, nro, nro_mandris, distancia_mandris, distancia_min_cabecotes, posicao, bipartido):
 		self.setNro(nro)
-		self.nro_pinos = nro_pinos
-		self.distancia_pinos = distancia_pinos
+		self.nro_mandris = nro_mandris
+		self.distancia_mandris = distancia_mandris
 		self.distancia_min_cabecotes = distancia_min_cabecotes
 		self.posicao = posicao
 		self.setBipartido(bipartido)
@@ -21,36 +21,36 @@ class Cabecote():
 		self.passante = False
 		self.furos = []
 		self.deslocamento_y = 0
-		self.default_pino = '×'
+		self.default_mandril = '×'
 
-		self.pinos = {}
-		for i in range(1, nro_pinos + 1):
-			self.pinos[i] = self.default_pino
+		self.mandris = {}
+		for i in range(1, nro_mandris + 1):
+			self.mandris[i] = self.default_mandril
 
-	# Define qual pino será usado para colocar a broca
-	def setPino(self, furo, eixo_y = 'normal', eixo = 'y'):
+	# Define qual mandril será usado para colocar a broca
+	def setMandril(self, furo, eixo_y = 'normal', eixo = 'y'):
 		self.addFuro(furo)
 		
 
 
 
 		# if self.used_bipartido:
-		# 	nro_pino = (self.nro_pinos // 2)
-		# 	nro_eixo = (nro_pino // (self.nro_pinos / 2)) + 1
+		# 	nro_mandril = (self.nro_mandris // 2)
+		# 	nro_eixo = (nro_mandril // (self.nro_mandris / 2)) + 1
 
 
 
 
 		if eixo_y == 'invertido':
-			deslocamento = getattr(furo, eixo) % self.distancia_pinos
-			nro_pino = int(len(self.pinos) + 1 - ((getattr(furo, eixo) + deslocamento) // self.distancia_pinos))
+			deslocamento = getattr(furo, eixo) % self.distancia_mandris
+			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.distancia_mandris))
 		elif eixo_y == 'normal':
-			deslocamento = getattr(furo, eixo) % self.distancia_pinos
-			nro_pino = int((getattr(furo, eixo) + deslocamento) // self.distancia_pinos)
+			deslocamento = getattr(furo, eixo) % self.distancia_mandris
+			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.distancia_mandris)
 
 
 
-		self.pinos[nro_pino] = furo.broca
+		self.mandris[nro_mandril] = furo.broca
 
 		if deslocamento != 0:
 			self.deslocamento_y = deslocamento
@@ -99,17 +99,17 @@ class Cabecote():
 		self.bipartido = bool
 
 		if bool:
-			self.pinos_rotacao = [
-				math.ceil(self.nro_pinos * (1/4)),
-				math.ceil(self.nro_pinos * (3/4))
+			self.mandris_rotacao = [
+				math.ceil(self.nro_mandris * (1/4)),
+				math.ceil(self.nro_mandris * (3/4))
 			]
 
 	# Define se o cabeçote está usando a bipartição
-	def setUsedBipartido(self, bool):
+	def setUsedBipartido(self, bool = True):
 		self.used_bipartido = bool
 
 	# Define se o eixo do cabeçote está usando a bipartição
-	def setUsedBipartidoEixo(self, eixo, bool):
+	def setUsedBipartidoEixo(self, eixo, bool = True):
 		self.used_bipartido_eixo[eixo] = bool
 
 	def imprimir_cabecote(self):
@@ -117,9 +117,9 @@ class Cabecote():
 		table.title = 'Cabeçote Nro ' + str(self.nro)
 		table.field_names = ['Nro']
 
-		# Pinos
-		for pino in range(1, len(self.pinos) + 1):
-			table.add_row([self.pinos[pino]])
+		# Mandris
+		for mandril in range(1, len(self.mandris) + 1):
+			table.add_row([self.mandris[mandril]])
 
 		# Distancia x
 		table.add_row(['-----'])
@@ -132,8 +132,8 @@ class Cabecote():
 		table._align[indice] = 'c'
 		table._valign[indice] = 't'
 		for i, _ in enumerate(table._rows):
-			if i < self.nro_pinos:
-				table._rows[i].insert(0, (i+1) * self.distancia_pinos)
+			if i < self.nro_mandris:
+				table._rows[i].insert(0, (i+1) * self.distancia_mandris)
 			else:
 				table._rows[i].insert(0, '')
 		
@@ -143,7 +143,7 @@ class Cabecote():
 		table._align[indice] = 'r'
 		table._valign[indice] = 't'
 		for i, _ in enumerate(table._rows):
-			if i < self.nro_pinos:
+			if i < self.nro_mandris:
 				table._rows[i].insert(0, (i+1))
 			else:
 				table._rows[i].insert(0, '')
