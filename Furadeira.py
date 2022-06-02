@@ -1,3 +1,5 @@
+from copy import copy
+import json
 from prettytable import PrettyTable
 from collections import defaultdict
 from typing import OrderedDict
@@ -13,57 +15,58 @@ class Furadeira:
 		self.distancia_mandris = array['distancia_mandris']
 		self.distancia_min_cabecotes = array['distancia_min_cabecotes']
 		self.posicao_cabecotes = array['posicao_cabecotes']
-		# self.batente_fundo = array['batente_fundo']
-		self.batente_fundo = 0
+		self.batente_fundo = array['batente_fundo']
 		self.eixo_y = array['eixo_y']
 		self.bipartido = array['bipartido']
 
 		# ----------
 		self.posicoes = list(self.posicao_cabecotes.keys())
 		self.deslocamento_y = 0
+		self.default_mandril = '×'
 
 		self.criar_cabecotes()
 		# self.__calcular_posicao_cabecotes()
 		# self.__calcular_posicao_brocas()
 
-	# Define o batente de fundo com base nas peças laterais
-	def defineBatenteFundo(self, furos):
-		side = '0 : 1'
-
-		furos = [item for sublist in furos for item in sublist]
-		furos = list(
-				furo for furo in furos
-				if furo.side == side)
-
-		if len(furos) > 0:
-			furo = min(furos)
-			diferenca = furo % self.distancia_mandris
-
-			if diferenca != 0:
-				self.batente_fundo = diferenca
-
-
 
 	# Cria os cabeçotes com base nas definições da furadeira
 	def criar_cabecotes(self):
-		cabecotes = []
+		self.cabecotes = []
 
 		for nro in range(1, self.nro_cabecotes + 1):
 			for posicao in self.posicao_cabecotes:
 				if nro in self.posicao_cabecotes[posicao]:
-					cabecote = Cabecote(nro,
-						self.nro_mandris,
-						self.distancia_mandris,
-						self.distancia_min_cabecotes,
+					cabecote = Cabecote(
+						nro,
 						posicao,
-						self.bipartido)
-					cabecotes.append(cabecote)
+						self
+					)
+					self.cabecotes.append(cabecote)
 					break
 
-		self.cabecotes = cabecotes
+
+	# Define o batente de fundo com base nas peças laterais
+	def defineBatenteFundo(self, furos):
+		
+		if self.batente_fundo:
+			self.batente_fundo = 0
+			side = '0 : 1'
+
+			furos = [item for sublist in furos for item in sublist]
+			furos = list(
+					furo.x for furo in furos
+					if furo.side == side)
+
+			if len(furos) > 0:
+				furo = min(furos)
+				diferenca = furo % self.distancia_mandris
+
+				if diferenca != 0:
+					self.batente_fundo = diferenca
+
 
 	# Distribuir furos para os cabeçotes
-	def distribuir_furos(self, furos):
+	def distribuir_furos(self, furos, peca):
 		
 		self.defineBatenteFundo(furos)
 
@@ -161,29 +164,81 @@ class Furadeira:
 						groups = dict(OrderedDict(sorted(groups.items())))
 						furos[side][alinhamento] = groups
 
-				# print(furos)
+				# print(furos[side])
 				# exit()
+
+
+				# Há um caso onde os furos podem estar alinhados em X
+				# porém, pode ser que um destes precise deslocamento em Y e outro não.
+				# Este caso deve receber atenção.
 
 
 				# Selecionar o cabeçotes
 				# -------------------------------------------------
 				for alinhamento in furos[side]:
 					for x in furos[side][alinhamento]:
-						for cabecote in self.cabecotes:
-							if cabecote.posicao == posicao and cabecote.used == False:
-								break
+						cabecote = list(cabecote for cabecote in self.cabecotes
+							if cabecote.posicao == posicao 
+							and cabecote.used == False)[0]
 
 						cabecote.use()
 						cabecote.setX(x)
 
 						if alinhamento == 'alinhado_y':
-							cabecote.setUsedBipartido()
+							cabecote.useBipartido()
 
 						# Aplica os furos
 						for furo in furos[side][alinhamento][x]:
 							cabecote.setMandril(furo, self.eixo_y)
 
+
+			# Esquerda
+			# Direita
+			# --------------------
+			elif side in ['0 : 1', '0 : 3']:
+
+				# Define o valor de x
+				if side == '0 : 1':
+					x = 0
+				else:
+					x = peca.comprimento
+
+				# Selecionar o cabeçotes
+				# -------------------------------------------------
+				for array in furos[side]:
+					cabecote = list(cabecote for cabecote in self.cabecotes
+							if cabecote.posicao == posicao 
+							and cabecote.used == False)[0]
+
+					cabecote.use()
+					cabecote.setX(x)
+
+					# print(x)
+					# Aplica os furos
+					for furo in array:
+						cabecote.setMandril(furo, self.eixo_y, 'x')
+
+
+			# Traseira
+			# Frontal
+			# --------------------
+			elif side in ['0 : 2', '0 : 4']:
+				continue
+		
+		
+		self.verificar_limites()
+
+
+	# Analisa os a distribuição dos cabeçoetes e verifica se há algum problema
+	# quanto ao limite em que está ocupando.
+	def verificar_limites(self):
 		self.ordenar_cabecotes()
+		cabecotes = list(cabecote for cabecote in self.cabecotes if cabecote.used == True)
+
+		for cabecote in cabecotes:
+			print(cabecote.nro, cabecote.posicao, cabecote.x)
+			print(cabecote.limite)
+			print()
 
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
@@ -230,6 +285,24 @@ class Furadeira:
 		return middle
 
 
+	# Imprimir batente fundo
+	def imprimir_setup(self):
+
+		table = PrettyTable()
+		table.title = 'Setup'
+		table.field_names = [
+			'Atributo',
+			'Valor',
+		]
+
+		# Dados
+		table.add_row([
+			'Batente de fundo',
+			self.batente_fundo
+		])
+
+		print(table)
+
 	# Imprimir tabela de cabeçotes
 	def imprimir_cabecotes(self):
 
@@ -243,23 +316,25 @@ class Furadeira:
 			row = list()
 			for cabecote in self.cabecotes:
 				if cabecote.used_bipartido:
-					if mandril in cabecote.mandris_rotacao:
+					eixo_rotacao = (mandril // ((self.nro_mandris // 2 + 1))) + 1
 
-						array = []
-						for rotacionado in list(cabecote.mandris)[
-								int(((mandril // (self.nro_mandris / 2)) * (self.nro_mandris / 2))) 
-								: 
-								int((mandril // (self.nro_mandris / 2)) * (self.nro_mandris / 2) + (self.nro_mandris / 2))
-							]:
-							
-							array.append(cabecote.mandris[rotacionado])
+					if cabecote.used_bipartido_eixo[eixo_rotacao]:
+						if mandril in cabecote.mandris_rotacao:
+							array = []
+							for rotacionado in list(cabecote.mandris)[
+									int(((mandril // (self.nro_mandris / 2)) * (self.nro_mandris / 2))) 
+									: 
+									int((mandril // (self.nro_mandris / 2)) * (self.nro_mandris / 2) + (self.nro_mandris / 2))
+								]:
+								
+								array.append(cabecote.mandris[rotacionado])
 
-						line = ' '.join(array)
-						row.append(line)
-
-						# row.append(fila_dividida)
+							line = ' '.join(array)
+							row.append(line)
+						else:
+							row.append(' ')
 					else:
-						row.append(' ')
+						row.append(cabecote.mandris[mandril])
 				else:
 					row.append(cabecote.mandris[mandril])
 
@@ -324,10 +399,12 @@ class Furadeira:
 
 		print(table)
 
+
 	# Imprimir tabela de cabeçote específico
 	def imprimir_cabecote(self, nro):
 		cabecote = self.cabecotes[nro - 1]
 		cabecote.imprimir_cabecote()
+
 
 	def imprimir_furadeira(self):
 		table = PrettyTable()
@@ -337,3 +414,29 @@ class Furadeira:
 			if var != 'cabecotes':
 				table.add_row([var, vars(self)[var]])
 		print(table)
+
+
+	# Returna em formato json
+	def toJson(self):
+
+		furadeira = self
+
+		# Deleta a furadeira do cabecote
+		for cabecote in furadeira.cabecotes:
+			cabecote.furos = [furo.__dict__ for furo in cabecote.furos]
+			del cabecote.furadeira
+
+		furadeira.cabecotes = [cabecote.__dict__ for cabecote in furadeira.cabecotes]
+
+		return json.dumps(furadeira.__dict__, sort_keys=True, indent='\t')
+
+
+	# Retorna um dicionário python 
+	def toDict(self):
+		furadeira = self.toJson()
+		furadeira = furadeira.replace('true', 'True')
+		furadeira = furadeira.replace('false', 'False')
+		furadeira = furadeira.replace(str(json.dumps(self.default_mandril)), 'False')
+
+		return furadeira
+

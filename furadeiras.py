@@ -40,7 +40,7 @@ furadeiras = {
 		'distancia_mandris': 32,
 		'distancia_min_cabecotes': {
 			'normal': 96,
-			'bipartido': 50,
+			'rotacionado': 50,
 		},
 		'bipartido': True,
 		'agregado': True,

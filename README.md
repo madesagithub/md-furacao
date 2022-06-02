@@ -3,7 +3,7 @@
 
 ## Roadmap
 - [x] Ler arquivo .bpp
-	- [x] Obter informções sobre a peça
+	- [x] Obter informações sobre a peça
 	- [x] Obter lista de furos, agrupados conforme o cabeçote
 - [ ] Cadastro de furadeiras:
 	- [ ] Cadastro geral
@@ -21,13 +21,26 @@
 			- [ ] Definir limites de deslocamento(X)
 			- [ ] Considerar possibilidade de troca por um cabeçote menor
 	- [ ] Definir deslocamento(Y) do cabeçote:
-		- [x] Cabeçote inteiro
+		- [ ] Cabeçote inteiro
 		- [ ] Cabeçote bipartido
 			- [ ] Considerar opção de deslocamento(Y) do eixo rotacionado
 - [ ] Definir deslocamento(Y) da furadeira
+	- [ ] BAtente de fundo refletir nos cálculos dos cabeçotes
 - [ ] Automatizar a informação das informações de furação.
 - [ ] Criar mecanismo automático que crie padrão de furação para as furadeiras Lidear através da interação dos softwares Ardis e Topsolid.
 - [ ] Criar interface gráfica para consulta das informações na máquina.
+
+### Peças
+- [ ] BASE 12X489X1772/BASE 12X489X1772.bpp
+- [x] BASE 15X400X1046/BASE 15X400X1046.bpp
+- [x] BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp
+- [ ] BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp
+- [ ] DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp
+- [ ] DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp
+- [ ] DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp
+- [ ] LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp
+- [ ] LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp
+- [ ] TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp
 
 
 ## Lógica de programação
@@ -73,7 +86,7 @@
 | 1		| Esquerda para Direita / Baixo para Cima	|
 | 2		| 											|
 | 3		| 											|
-| 4		| Direita para Esqeurda / Cima para Baixo 	|
+| 4		| Direita para Esquerda / Cima para Baixo 	|
 
 - Posições
 	- Primeiro cabeçote: `0:1`
