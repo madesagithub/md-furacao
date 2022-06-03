@@ -232,17 +232,70 @@ class Furadeira:
 	# Analisa os a distribuição dos cabeçoetes e verifica se há algum problema
 	# quanto ao limite em que está ocupando.
 	def verificar_limites(self):
-		self.ordenar_cabecotes()
-		cabecotes = list(cabecote for cabecote in self.cabecotes if cabecote.used == True)
+		self.ordenarCabecotes()
+		cabecotes = list(cabecote for cabecote in self.cabecotes 
+			if cabecote.used == True
+			and cabecote.posicao == 'inferior')
 
-		for cabecote in cabecotes:
-			print(cabecote.nro, cabecote.posicao, cabecote.x)
-			print(cabecote.limite)
-			print()
+		# Verifica quais cabeçotes possuem problemas de limite
+		problemas = []
+		for i, cabecote in enumerate(cabecotes):
+			if i != 0:
+				if cabecote.limite['start'] < cabecotes[i - 1].limite['end']:
+					# problemas.append([cabecotes[i-1], cabecote])
+					problemas.append(cabecote)
+
+			if i != len(cabecotes) - 1:
+				if cabecote.limite['end'] > cabecotes[i + 1].limite['start']:
+					# problemas.append([cabecote, cabecotes[i+1]])
+					problemas.append(cabecote)
+
+		# Atualiza lista de cabecotes
+		cabecotes = list(cabecote for cabecote in cabecotes 
+			if cabecote in problemas)
+
+		# Verifica quais cabeçotes podem ser movidos para a parte superior
+		problemas = {}
+		for i, cabecote in enumerate(cabecotes):
+			problemas[cabecote.nro] = 0
+
+			if i != 0:
+				if cabecote.limite['start'] < cabecotes[i - 1].limite['end']:
+					# problemas.append([cabecotes[i-1], cabecote])
+					problemas[cabecote.nro] += 1
+
+			if i != len(cabecotes) - 1:
+				if cabecote.limite['end'] > cabecotes[i + 1].limite['start']:
+					# problemas.append([cabecote, cabecotes[i+1]])
+					problemas[cabecote.nro] += 1
+
+			# print(cabecote.nro, cabecote.posicao, cabecote.x)
+			# print(cabecote.limite)
+			# print()
+
+		# for problema in problemas:
+		# 	continue
+
+		# print(problemas)
+		# print(max(problemas.values()))
+
+		for i in range(max(problemas.values()) + 1):
+			print('normal')
+			print(i)
+			
+
+		# for i in reversed(range(max(problemas.values()), 1)):
+		for i in reversed(range(max(problemas.values()) + 1, 1)):
+			print('reverso')
+			print(i)
+			for cabecote in cabecotes:
+				if problemas[cabecote.nro] == i:
+					self.moverCabecote(cabecote, 'superior')
+					# cabecote.moverParaCima()
 
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
-	def ordenar_cabecotes(self):
+	def ordenarCabecotes(self):
 		for posicao in self.posicoes:
 			cabecotes = list(
 				cabecote for cabecote in self.cabecotes 
@@ -261,6 +314,30 @@ class Furadeira:
 
 		self.cabecotes.sort(key=lambda cabecote: cabecote.nro)
 
+
+	# Muda a posição do cabeçote
+	def moverCabecote(self, cabecote, posicao):
+
+		print('oi')
+		novo_cabecote = list(cabecote for cabecote in self.cabecotes
+			if cabecote.posicao == posicao 
+			and cabecote.used == False)[0]
+
+		print(novo_cabecote)
+		exit()
+
+
+		# novo_cabecote.setNro(cabecote.nro), cabecote = 
+
+		novo_cabecote.use()
+		novo_cabecote.setX(cabecote.x)
+
+
+
+		cabecote.setPosicao(posicao)
+		cabecote.setX(cabecote.x)
+		cabecote.setY(cabecote.y)
+		cabecote.use(False)
 
 	# Define o ponto X que os furos deverão ser aplicados
 	def defineMiddleX(self, furos):

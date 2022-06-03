@@ -28,7 +28,10 @@ class Cabecote():
 		# Informações da furadeira ----------
 		self.setBipartido(self.furadeira.bipartido)
 
-		# ----------
+		self.create()
+
+
+	def create(self):
 		self.used = False
 		self.used_bipartido = False
 		self.used_bipartido_eixo = {
@@ -114,6 +117,10 @@ class Cabecote():
 	# Indica que o cabeçote está sendo utilizado
 	def use(self):
 		self.used = True
+
+
+	def restore(self):
+		self.create()
 
 
 	# Verifica se o cabeçote possui somente furos passantes
