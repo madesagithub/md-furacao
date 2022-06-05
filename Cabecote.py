@@ -132,6 +132,15 @@ class Cabecote():
 			self.passante = True
 
 
+
+	def isPassante(self):
+		if 0 in list(furo.p for furo in self.furos):
+			return False
+		else:
+			return True
+
+
+
 	# Adiciona o furo para a lista
 	def addFuro(self, furo):
 		self.furos.append(furo)

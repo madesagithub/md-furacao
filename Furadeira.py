@@ -1,4 +1,3 @@
-from copy import copy
 import json
 from prettytable import PrettyTable
 from collections import defaultdict
@@ -229,10 +228,11 @@ class Furadeira:
 		self.verificar_limites()
 
 
-	# Analisa os a distribuição dos cabeçoetes e verifica se há algum problema
+	# Analisa os a distribuição dos cabeçotes e verifica se há algum problema
 	# quanto ao limite em que está ocupando.
 	def verificar_limites(self):
 		self.ordenarCabecotes()
+
 		cabecotes = list(cabecote for cabecote in self.cabecotes 
 			if cabecote.used == True
 			and cabecote.posicao == 'inferior')
@@ -273,25 +273,19 @@ class Furadeira:
 			# print(cabecote.limite)
 			# print()
 
+		print(problemas)
 		# for problema in problemas:
 		# 	continue
 
 		# print(problemas)
 		# print(max(problemas.values()))
 
-		for i in range(max(problemas.values()) + 1):
-			print('normal')
-			print(i)
-			
-
-		# for i in reversed(range(max(problemas.values()), 1)):
-		for i in reversed(range(max(problemas.values()) + 1, 1)):
-			print('reverso')
-			print(i)
+		for i in reversed(range(1, max(problemas.values()) + 1)):
 			for cabecote in cabecotes:
-				if problemas[cabecote.nro] == i:
+				if problemas[cabecote.nro] == i and cabecote.isPassante():
 					self.moverCabecote(cabecote, 'superior')
 					# cabecote.moverParaCima()
+			
 
 
 	# Ordena os cabeçotes que serão utilizados conforme a posição no eixo x
@@ -318,26 +312,19 @@ class Furadeira:
 	# Muda a posição do cabeçote
 	def moverCabecote(self, cabecote, posicao):
 
-		print('oi')
 		novo_cabecote = list(cabecote for cabecote in self.cabecotes
 			if cabecote.posicao == posicao 
 			and cabecote.used == False)[0]
 
-		print(novo_cabecote)
-		exit()
+		self.swapCabecotes(cabecote, novo_cabecote)
 
 
-		# novo_cabecote.setNro(cabecote.nro), cabecote = 
+	# Troca 2 cabeçotes de posição
+	def swapCabecotes(self, cabecote_1, cabecote_2):
+		cabecote_1.nro, cabecote_2.nro = cabecote_2.nro, cabecote_1.nro
+		cabecote_1.posicao, cabecote_2.posicao = cabecote_2.posicao, cabecote_1.posicao
 
-		novo_cabecote.use()
-		novo_cabecote.setX(cabecote.x)
-
-
-
-		cabecote.setPosicao(posicao)
-		cabecote.setX(cabecote.x)
-		cabecote.setY(cabecote.y)
-		cabecote.use(False)
+		self.ordenarCabecotes()
 
 	# Define o ponto X que os furos deverão ser aplicados
 	def defineMiddleX(self, furos):
