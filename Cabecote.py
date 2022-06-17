@@ -2,6 +2,7 @@ import math
 from prettytable import PrettyTable
 
 # from Furadeira import Furadeira
+from Agregado import Agregado
 
 class Cabecote():
 	nro: int
@@ -11,8 +12,8 @@ class Cabecote():
 	used: bool
 	used_bipartido: bool
 	used_bipartido_eixo: dict
-	passante: bool
 	furos: list
+	agregados: list
 	mandris: dict
 	mandris_rotacao: list
 	deslocamento_y: int
@@ -38,8 +39,8 @@ class Cabecote():
 			1: False,
 			2: False,
 		}
-		self.passante = False
 		self.furos = []
+		self.agregados = []
 		self.deslocamento_y = 0
 		self.deslocamento_y_eixo = {
 			1: 0,
@@ -59,12 +60,8 @@ class Cabecote():
 	def set_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
 		self.add_furo(furo)
 
-		if eixo_y == 'invertido':
-			deslocamento = getattr(furo, eixo) % self.furadeira.distancia_mandris
-			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
-		else:
-			deslocamento = getattr(furo, eixo) % self.furadeira.distancia_mandris
-			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris)
+		nro_mandril = self.calcular_mandril(furo, eixo_y, eixo)
+		deslocamento = getattr(furo, eixo) % self.furadeira.distancia_mandris
 
 		self.mandris[nro_mandril] = furo.broca
 
@@ -75,6 +72,19 @@ class Cabecote():
 		if deslocamento != 0:
 			self.deslocamento_y = deslocamento
 
+		return nro_mandril
+
+
+	# Calcular qual mandril será utilizado
+	def calcular_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
+		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) + self.furadeira.distancia_mandris
+
+		if eixo_y == 'invertido':
+			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
+		else:
+			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris)
+
+		return nro_mandril
 
 	# Define o número de identificação do cabeçote
 	def set_nro(self, nro):
@@ -112,7 +122,13 @@ class Cabecote():
 			return self.mandris_rotacao
 		else:
 			return False
+
+
+	# Retorna em qual eixo de rotação um mandril está
+	def get_eixo_rotacao(self, mandril):
+		eixo = (mandril // ((self.furadeira.nro_mandris // 2 + 1))) + 1
 		
+		return eixo
 
 	# Indica que o cabeçote está sendo utilizado
 	def use(self):
@@ -124,16 +140,9 @@ class Cabecote():
 		self.create()
 
 
+	# Verifica se é um cabeçote passante
 	# Verifica se o cabeçote possui somente furos passantes
 	# Cabeçotes assim definidos podem ser alocados na posição superior
-	def define_passante(self):
-		if 0 in list(furo.p for furo in self.furos):
-			self.passante = False
-		else:
-			self.passante = True
-
-
-	# Verifica se é um cabeçote passante
 	def is_passante(self):
 		return 0 not in list(furo.p for furo in self.furos)
 
@@ -141,17 +150,6 @@ class Cabecote():
 	# Adiciona o furo para a lista
 	def add_furo(self, furo):
 		self.furos.append(furo)
-
-
-	# Adicionar os furos ao cabeçote
-	def set_furos(self, furos):
-		
-		for furo in furos:
-			self.add_furo(furo)
-
-		self.define_passante()
-
-		self.furos = furos
 
 
 	# Define se o cabeçote tem a possibilidade de ser bipartido
@@ -175,6 +173,48 @@ class Cabecote():
 		self.used_bipartido_eixo[eixo] = bool
 
 
+	# Adiciona uma peça agregada ao cabeçote
+	def add_agregado(self, furos):
+		for furo in furos:
+			# Definir mandril
+			mandril = self.calcular_mandril(furo)
+
+			# Definir posicao
+			if furo.x < self.x:
+				posicao = 'esquerda'
+			elif furo.x > self.x:
+				posicao = 'direita'
+
+			# Adicionar furo
+			self.furos.append(furo)
+
+			agregado = Agregado(
+					self.furadeira,
+					self,
+					mandril,
+					posicao,
+					furo
+				)
+
+			self.agregados.append(agregado)
+
+
+	# Verifica se o cabeçote está usando o agregado
+	def used_agregado(self, nro_mandril = False):
+		if nro_mandril:
+			for agregado in self.agregados:
+				if agregado.mandril == nro_mandril:
+					return True
+			return False
+		else:
+			return len(self.agregados) > 0
+
+
+	# Verifica se o deslocamento do cabeçote é multiplo de outro deslocamento
+	def deslocamento_y_multiplo(self, deslocamento_y):
+		return (abs(deslocamento_y - self.deslocamento_y) % self.furadeira.distancia_mandris) == 0
+
+
 	def imprimir_cabecote(self):
 		table = PrettyTable()
 		table.title = 'Cabeçote Nro ' + str(self.nro)
@@ -183,7 +223,7 @@ class Cabecote():
 		# Mandris
 		for mandril in range(1, len(self.mandris) + 1):
 			if self.used_bipartido:
-				eixo_rotacao = (mandril // ((self.furadeira.nro_mandris // 2 + 1))) + 1
+				eixo_rotacao = self.get_eixo_rotacao(mandril)
 
 				if self.used_bipartido_eixo[eixo_rotacao]:
 					if mandril in self.mandris_rotacao:

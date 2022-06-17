@@ -51,9 +51,8 @@ class Furadeira:
 			self.batente_fundo = 0
 			side = '0 : 1'
 
-			furos = [item for sublist in furos for item in sublist]
-			furos = list(
-					furo.x for furo in furos
+			furos = [item for sublist in furos for item in sublist]			
+			furos = list(furo.x for furo in furos
 					if furo.side == side)
 
 			if len(furos) > 0:
@@ -225,6 +224,7 @@ class Furadeira:
 				continue
 
 		self.resolver_limites()
+		self.verificar_agregado()
 
 
 	# Resolve os problemas relacionados aos limites
@@ -239,15 +239,50 @@ class Furadeira:
 		self.ordenar_cabecotes()
 
 
+	# Verifica se é necessário adicionar um agregado
+	def verificar_agregado(self):
+		problemas = self.encontrar_problemas_limite('superior')
+
+		print(problemas)
+		if problemas:
+			for cabecote_problema in list(problemas):
+				cabecotes_inferior = list(cabecote for cabecote in self.cabecotes
+					if cabecote.posicao == 'inferior'
+					and cabecote.used == True
+					and (cabecote.x == cabecote_problema.x + self.distancia_mandris or
+						cabecote.x == cabecote_problema.x - self.distancia_mandris)
+					and cabecote.deslocamento_y_multiplo(cabecote_problema.deslocamento_y)
+					)
+
+				for cabecote in cabecotes_inferior:
+					cabecote.add_agregado(cabecote_problema.furos)
+					cabecote_problema.restore()
+
+
 	# Analisa os a distribuição dos cabeçotes e verifica se há algum problema
 	# quanto ao limite em que está ocupando.
 	def verificar_limites(self):
 		self.ordenar_cabecotes()
 
+		# self.imprimir_cabecotes()
+
+
+
+		# Problema de limites
+		# --------------------
 		# 1. Verificar quais possuem mais problemas
 		# 2. Verificar quais podem ser movidos para cima
-		# 3. Verificar quais possuem menos furos
-	
+		# 3. Ordenar cabeçotes que possuem menos furos
+		# 4. Mover para cima um a um e verificar problemas
+
+		# Problema de agregado
+		# --------------------
+		# 5. Verificar limites dos cabeçotes superiores
+		# 6. Verificar onde o agregado pode ser colocado (cabeçotes inferiores ou superiores)
+		# 7. Remover cabecote e incluir agregado
+
+
+
 		# Lista de cabeçotes
 		cabecotes = list(cabecote for cabecote in self.cabecotes
 			if cabecote.used == True
@@ -256,7 +291,6 @@ class Furadeira:
 		# Lista de cabecotes passantes
 		passantes = list(cabecote for cabecote in cabecotes
 			if cabecote.is_passante())
-
 
 		# Verifica quais cabecotes passantes possuem problemas de limite
 		for i, cabecote in enumerate(cabecotes):
@@ -295,6 +329,8 @@ class Furadeira:
 					elif cabecote.x < cabecote_lateral.x:
 						if cabecote.limite['end'] > cabecote_lateral.limite['start']:
 							problemas[cabecote] += 1
+
+		problemas = [problema for problema in problemas if problemas[problema] > 0]
 
 		return problemas
 
@@ -395,7 +431,7 @@ class Furadeira:
 			row = list()
 			for cabecote in self.cabecotes:
 				if cabecote.used_bipartido:
-					eixo_rotacao = (mandril // ((self.nro_mandris // 2 + 1))) + 1
+					eixo_rotacao = cabecote.get_eixo_rotacao(mandril)
 
 					if cabecote.used_bipartido_eixo[eixo_rotacao]:
 						if mandril in cabecote.mandris_rotacao:
@@ -415,15 +451,38 @@ class Furadeira:
 					else:
 						row.append(cabecote.mandris[mandril])
 				else:
-					row.append(cabecote.mandris[mandril])
+					# Agregado
+					if cabecote.used_agregado():
+						if cabecote.used_agregado(mandril):
+							agregado = [agregado for agregado in cabecote.agregados
+								if agregado.mandril == mandril][0]
 
+							if agregado.posicao == 'esquerda':
+								array = [agregado.furo.broca, cabecote.mandris[mandril]]
+								row.append(' '.join(array))
+							elif agregado.posicao == 'direita':
+								array = [cabecote.mandris[mandril], agregado.furo.broca]
+								row.append(' '.join(array))
+						else:
+							posicoes = [agregado.posicao for agregado in cabecote.agregados][0]
 
-			# table.add_row(list(cabecote.mandris[mandril] for cabecote in self.cabecotes))
+							if 'esquerda' in posicoes and 'direita' in posicoes:
+								array = ['     ', cabecote.mandris[mandril], '     ']
+								row.append(' '.join(array))
+							elif 'esquerda' in posicoes:
+								array = ['     ', cabecote.mandris[mandril]]
+								row.append(' '.join(array))
+							elif 'direita' in posicoes:
+								array = [cabecote.mandris[mandril], '     ']
+								row.append(' '.join(array))
+					else:
+						row.append(cabecote.mandris[mandril])
 			table.add_row(row)
 
 		# Distancia x
 		line = '-----'
 		table.add_row(list(line for cabecote in self.cabecotes))
+
 		# Limites
 		row = []
 		for cabecote in self.cabecotes:
@@ -433,8 +492,10 @@ class Furadeira:
 			else:
 				row.append(cabecote.x)
 		table.add_row(row)
+
 		# Deslocamento Y
 		table.add_row(list(cabecote.deslocamento_y for cabecote in self.cabecotes))
+
 		# Limites totais
 		row = []
 		for cabecote in self.cabecotes:
@@ -443,7 +504,6 @@ class Furadeira:
 			else:
 				string = ' '
 			row.append(string)
-		# table.add_row(row)
 		table.add_row(list(cabecote.posicao[0:3] for cabecote in self.cabecotes))
 
 		# Índice 1
@@ -456,7 +516,7 @@ class Furadeira:
 				if self.eixo_y == 'invertido':
 					table._rows[i].insert(0, (len(table._rows) - 3 - i) * self.distancia_mandris)
 				else:
-					table._rows[i].insert(0, (i+1) * self.distancia_mandris)
+					table._rows[i].insert(0, (i) * self.distancia_mandris)
 			elif i == self.nro_mandris:
 				table._rows[i].insert(0, line)
 			elif i == self.nro_mandris + 1:
@@ -476,12 +536,29 @@ class Furadeira:
 			else:
 				table._rows[i].insert(0, '')
 
-
 		print(table)
+
+		# Infomrações adicionais
+		# -------------------- 
+		info = PrettyTable()
+		info.title = 'Informações adicionais'
+		info.field_names = ['Atributo', 'Valor']
 
 		# Observações
 		if hasattr(self, 'observacao'):
-			print(self.observacao)
+			info.add_row(['Observações', self.observacao])
+
+		# Batente fundo
+		if self.batente_fundo != 0:
+			info.add_row(['Batente fundo', self.batente_fundo])
+
+		# Agregado
+		for cabecote in [cabecote for cabecote in self.cabecotes if cabecote.used_agregado()]:
+			for agregado in cabecote.agregados:
+				info.add_row(['Agregado', 'Cabeçote ' + str(cabecote.nro) + ' -> Mandril ' + str(agregado.mandril) + ' ('+ agregado.posicao +')'])
+
+		if (len(info.rows)):
+			print(info)
 
 	# Imprimir tabela de cabeçote específico
 	def imprimir_cabecote(self, nro):

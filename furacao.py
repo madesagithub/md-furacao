@@ -18,11 +18,14 @@ from Peca import Peca							# classe Peca
 
 # Furo superior
 # --------------------
-filename = 'DIVISÓRIA 12X387X1652.bpp'										# PROBLEMA	
 # filename = 'BASE 12X489X1772/BASE 12X489X1772.bpp'							# OK
-# filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
+filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
 # filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'		# OK
 # filename = 'LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp' # OK
+
+# Agregado
+# --------------------
+# filename = 'DIVISÓRIA 12X387X1652.bpp'
 
 # Bipartido
 # --------------------
@@ -30,6 +33,15 @@ filename = 'DIVISÓRIA 12X387X1652.bpp'										# PROBLEMA
 # filename = 'DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp'			# Complexo
 # filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
 # filename = 'TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp'			# Complexo
+
+# Bipartido e furo superior
+# --------------------
+# filename = 'LATERAL DIR COLUNA 12X250X1640/LATERAL DIR COLUNA 12X250X1640.bpp'	# Complexo
+# filename = 'LATERAL DIR BALCÃO 12X400X645/LATERAL DIR BALCÃO 12X400X645.bpp'
+
+
+# filename = 'LATERAL DIR AÉREO 12X250X220/LATERAL DIR AÉREO 12X250X220.bpp'
+# filename = 'BASE 15X289X768/BASE 15X289X768.bpp'
 
 dir = os.path.dirname(__file__) + '/Peças/'
 path = dir + filename
@@ -39,6 +51,7 @@ path = dir + filename
 # Variáveis de configuração
 # --------------------
 modelo_furadeira = 'F500-B'
+# modelo_furadeira = 'F400-T'
 # --------------------
 
 
@@ -98,7 +111,7 @@ def findFuros():
 				flag_nome = True
 
 		if flag_nome:
-			if line.find("@ BG") == 0:
+			if line.find("@ BG") == 0 or line.find("@ BH") == 0:
 				# line[ 0]: '@ BG'
 				# line[ 1]: '""'
 				# line[ 2]: '""'
@@ -116,6 +129,7 @@ def findFuros():
 				# line[37]: "id"
 
 				line = line.split(',')
+				
 
 				# Dados
 				id = line[37].strip().replace('"', '')
