@@ -10,21 +10,27 @@ from Furo import Furo							# classe Furo
 from Peca import Peca							# classe Peca		
 
 
-# Arquivo
+# Arquivo simples
 # --------------------
-# filename = 'DIVISÓRIA 12X387X1652.bpp'
-# filename = 'TAMPO MAL 15X440X2280.bpp'
-# --------------------
-# filename = 'BASE 12X489X1772/BASE 12X489X1772.bpp'							# Revisar - Furo superior
+# filename = 'TAMPO MAL 15X440X2280.bpp'										# OK
 # filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'							# OK
 # filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'				# OK
-filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# Furo superior
-# filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'		# Revisar - Furo superior
-# filename = 'DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp'
-# filename = 'DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp'
+
+# Furo superior
+# --------------------
+filename = 'DIVISÓRIA 12X387X1652.bpp'										# PROBLEMA	
+# filename = 'BASE 12X489X1772/BASE 12X489X1772.bpp'							# OK
+# filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
+# filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'		# OK
+# filename = 'LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp' # OK
+
+# Bipartido
+# --------------------
+# filename = 'DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp'		# Complexo
+# filename = 'DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp'			# Complexo
 # filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
-# filename = 'LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp'
-# filename = 'TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp'
+# filename = 'TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp'			# Complexo
+
 dir = os.path.dirname(__file__) + '/Peças/'
 path = dir + filename
 # --------------------
@@ -210,13 +216,14 @@ imprimirFuros(peca.nome, furos)
 # Furadeira
 furadeira = createFuradeira(modelo_furadeira)
 
-
-# furadeira.imprimir_furadeira()
+furadeira.imprimir_furadeira()
 furadeira.distribuir_furos(furos, peca)
 # furadeira.imprimir_setup()
 furadeira.imprimir_cabecotes()
 # furadeira.imprimir_cabecote(5)
 # print(furos)
+
+
 
 # Testes
 # --------------------

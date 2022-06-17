@@ -21,12 +21,12 @@ class Cabecote():
 
 
 	def __init__(self, nro, posicao, furadeira):
-		self.setNro(nro)
+		self.set_nro(nro)
 		self.posicao = posicao
 		self.furadeira = furadeira
 
 		# Informações da furadeira ----------
-		self.setBipartido(self.furadeira.bipartido)
+		self.set_bipartido(self.furadeira.bipartido)
 
 		self.create()
 
@@ -47,7 +47,7 @@ class Cabecote():
 		}
 
 		# ----------
-		self.setX(0)
+		self.set_x(0)
 
 		# Criação dos mandris ----------
 		self.mandris = {}
@@ -56,8 +56,8 @@ class Cabecote():
 
 
 	# Define qual mandril será usado para colocar a broca
-	def setMandril(self, furo, eixo_y = 'normal', eixo = 'y'):
-		self.addFuro(furo)
+	def set_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
+		self.add_furo(furo)
 
 		if eixo_y == 'invertido':
 			deslocamento = getattr(furo, eixo) % self.furadeira.distancia_mandris
@@ -70,25 +70,25 @@ class Cabecote():
 
 		if self.used_bipartido:
 			eixo_rotacao = (nro_mandril // ((self.furadeira.nro_mandris // 2 + 1))) + 1
-			self.useBipartidoEixo(eixo_rotacao)
+			self.use_bipartido_eixo(eixo_rotacao)
 
 		if deslocamento != 0:
 			self.deslocamento_y = deslocamento
 
 
 	# Define o número de identificação do cabeçote
-	def setNro(self, nro):
+	def set_nro(self, nro):
 		self.nro = nro
 
 
 	# Define a distancia no eixo X do cabeçote
-	def setX(self, x):
+	def set_x(self, x):
 		self.x = x
-		self.setLimite()
+		self.set_limite()
 
 
 	# Define os limites que o cabeçote ira ocupar
-	def	setLimite(self):
+	def	set_limite(self):
 		self.limite = {}
 
 		if self.posicao in ['esquerda', 'direita']:
@@ -105,10 +105,10 @@ class Cabecote():
 
 
 	# Retorna os mandris que estão sobre o eixo de rotação do cabeçote bipartido
-	def getMandrisRotacao(self):
+	def get_mandris_rotacao(self):
 		if self.furadeira.bipartido:
 			if self.mandris_rotacao not in vars:
-				self.setBipartido()
+				self.set_bipartido()
 			return self.mandris_rotacao
 		else:
 			return False
@@ -119,46 +119,43 @@ class Cabecote():
 		self.used = True
 
 
+	# Restaura o furos para a condição inicial
 	def restore(self):
 		self.create()
 
 
 	# Verifica se o cabeçote possui somente furos passantes
 	# Cabeçotes assim definidos podem ser alocados na posição superior
-	def definePassante(self):
+	def define_passante(self):
 		if 0 in list(furo.p for furo in self.furos):
 			self.passante = False
 		else:
 			self.passante = True
 
 
-
-	def isPassante(self):
-		if 0 in list(furo.p for furo in self.furos):
-			return False
-		else:
-			return True
-
+	# Verifica se é um cabeçote passante
+	def is_passante(self):
+		return 0 not in list(furo.p for furo in self.furos)
 
 
 	# Adiciona o furo para a lista
-	def addFuro(self, furo):
+	def add_furo(self, furo):
 		self.furos.append(furo)
 
 
 	# Adicionar os furos ao cabeçote
-	def setFuros(self, furos):
+	def set_furos(self, furos):
 		
 		for furo in furos:
-			self.addFuro(furo)
+			self.add_furo(furo)
 
-		self.definePassante()
+		self.define_passante()
 
 		self.furos = furos
 
 
 	# Define se o cabeçote tem a possibilidade de ser bipartido
-	def setBipartido(self, bool = True):
+	def set_bipartido(self, bool = True):
 		self.bipartido = bool
 
 		if bool:
@@ -169,12 +166,12 @@ class Cabecote():
 
 
 	# Define se o cabeçote está usando a bipartição
-	def useBipartido(self, bool = True):
+	def use_bipartido(self, bool = True):
 		self.used_bipartido = bool
 
 
 	# Define se o eixo do cabeçote está usando a bipartição
-	def useBipartidoEixo(self, eixo, bool = True):
+	def use_bipartido_eixo(self, eixo, bool = True):
 		self.used_bipartido_eixo[eixo] = bool
 
 
