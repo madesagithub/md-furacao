@@ -15,31 +15,41 @@
 	- [ ] Definir mandril
 		- [x] Cabeçote inteiro
 		- [ ] Cabeçote bipartido
-	- [ ] Definir deslocamento(X) do cabeçote:
+	- [ ] Definir deslocamento(`X`) do cabeçote:
 		- [x] Cabeçote inteiro
 		- [ ] Cabeçote bipartido:
-			- [ ] Definir limites de deslocamento(X)
+			- [ ] Definir limites de deslocamento(`X`)
 			- [ ] Considerar possibilidade de troca por um cabeçote menor
 	- [ ] Definir deslocamento(Y) do cabeçote:
 		- [ ] Cabeçote inteiro
 		- [ ] Cabeçote bipartido
-			- [ ] Considerar opção de deslocamento(Y) do eixo rotacionado
-- [ ] Definir deslocamento(Y) da furadeira
-	- [ ] BAtente de fundo refletir nos cálculos dos cabeçotes
+			- [ ] Considerar opção de deslocamento(`Y`) do eixo rotacionado
+- [ ] Definir deslocamento(`Y`) da furadeira
+	- [ ] Batente de fundo refletir nos cálculos dos cabeçotes
 - [ ] Automatizar a informação das informações de furação.
 - [ ] Criar mecanismo automático que crie padrão de furação para as furadeiras Lidear através da interação dos softwares Ardis e Topsolid.
 - [ ] Criar interface gráfica para consulta das informações na máquina.
 
-### Peças
+### Verificação de Peças
+
+#### Peças simples
+- [ ] TAMPO MAL 15X440X2280.bpp
+- [ ] BASE 15X400X1046/BASE 15X400X1046.bpp
+- [ ] BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp
+
+#### Peças com furo superior
 - [ ] BASE 12X489X1772/BASE 12X489X1772.bpp
-- [x] BASE 15X400X1046/BASE 15X400X1046.bpp
-- [x] BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp
 - [ ] BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp
 - [ ] DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp
+- [ ] LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp
+
+#### Peças com agregado
+- [ ] DIVISÓRIA 12X387X1652.bpp
+
+#### Peças com bipartido
 - [ ] DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp
 - [ ] DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp
 - [ ] LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp
-- [ ] LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp
 - [ ] TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp
 
 
@@ -54,6 +64,17 @@
 3. Varrer a lista de furos agrupados pelo `side`;
 4. Varrer a lista de cabeçotes até encontrar o primeiro que seja da posição desejada e que não esteja sendo utilizado.
 5. Varrer a lista de furo agrupados por `side` e (`x` ou `y`) e definir em qual broca o furo será colocado.
+
+### Problema de limites
+1. Verificar quais possuem mais problemas
+2. Verificar quais podem ser movidos para cima
+3. Ordenar cabeçotes que possuem menos furos
+4. Mover para cima um a um e verificar problemas
+
+### Problema de agregado
+5. Verificar limites dos cabeçotes superiores
+6. Verificar onde o agregado pode ser colocado (cabeçotes inferiores ou superiores)
+7. Remover cabecote e incluir agregado
 
 
 ## Definições
@@ -96,11 +117,10 @@
 ### Furadeiras
 
 #### Furadeira-1
-
-| Atributo					| Valor	|
-|--------------------------	|------	|
-| Número de cabeçotes		| 19	|
-| Número de brocas			| 21	|
+| Atributo						| Valor	|
+|------------------------------	|------	|
+| Número de cabeçotes			| 19	|
+| Número de brocas				| 21	|
 | Distância entre os mandris	| 32	|
 
 | Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
@@ -125,12 +145,11 @@
 | 18		| Traseiro	    | 3		 		|								|
 | 19		| Traseiro  	| 4		 		|								|
 
-#### Lidear: F400-T
-
-| Atributo					| Valor	|
-|--------------------------	|------	|
-| Número de cabeçotes		| 19	|
-| Número de brocas			| 21	|
+#### Lidear F400-T
+| Atributo						| Valor	|
+|------------------------------	|------	|
+| Número de cabeçotes			| 19	|
+| Número de brocas				| 21	|
 | Distância entre os mandris	| 32	|
 
 | Cabeçote  | Posição 	    | Ordenamento 	| Observação 					|
@@ -153,7 +172,6 @@
 | 16		| Topo direito  | 				| Final (x = medida da peça)	|
 
 ### F500-B
-
 - Marca: Lidear
 - Nome: F500-B
 - Nro cabeçotes: 16
