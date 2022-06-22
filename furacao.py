@@ -15,23 +15,30 @@ from Peca import Peca							# classe Peca
 # filename = 'TAMPO MAL 15X440X2280.bpp'										# OK
 # filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'							# OK
 # filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'				# OK
+# filename = 'LATERAL DIR AÉREO 12X250X220/LATERAL DIR AÉREO 12X250X220.bpp'	# OK
 
 # Furo superior
 # --------------------
 # filename = 'BASE 12X489X1772/BASE 12X489X1772.bpp'							# OK
-filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
+# filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
+
+# Furo superior e deslocamento de cabeçote
+# --------------------
 # filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'		# OK
 # filename = 'LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp' # OK
 
+# Batente de fundo
+# --------------------
+# filename = 'BASE 15X289X768/BASE 15X289X768.bpp'								# OK
+
 # Agregado
 # --------------------
-# filename = 'DIVISÓRIA 12X387X1652.bpp'
+# filename = 'DIVISÓRIA 12X387X1652.bpp'										# OK
 
 # Bipartido
 # --------------------
 # filename = 'DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp'		# Complexo
 # filename = 'DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp'			# Complexo
-# filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
 # filename = 'TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp'			# Complexo
 
 # Bipartido e furo superior
@@ -39,9 +46,10 @@ filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
 # filename = 'LATERAL DIR COLUNA 12X250X1640/LATERAL DIR COLUNA 12X250X1640.bpp'	# Complexo
 # filename = 'LATERAL DIR BALCÃO 12X400X645/LATERAL DIR BALCÃO 12X400X645.bpp'
 
+# Bipartido com menos mandris
+# --------------------
+filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
 
-# filename = 'LATERAL DIR AÉREO 12X250X220/LATERAL DIR AÉREO 12X250X220.bpp'
-# filename = 'BASE 15X289X768/BASE 15X289X768.bpp'
 
 dir = os.path.dirname(__file__) + '/Peças/'
 path = dir + filename
@@ -171,7 +179,7 @@ def findFuros():
 
 # Imprimir tabela de dados de furos
 # --------------------
-def imprimirFuros(title, furos):
+def imprimir_furos(title, furos):
 	data = PrettyTable()
 	data.title = title
 	data.field_names = ["Id", "Side", "CRN", "X", "Y", "Z", "DP", "Diametro", "P", "Broca"]
@@ -225,7 +233,7 @@ peca.imprimir_peca()
 
 # Furos
 furos = findFuros()
-imprimirFuros(peca.nome, furos)
+imprimir_furos(peca.nome, furos)
 
 # Furadeira
 furadeira = createFuradeira(modelo_furadeira)

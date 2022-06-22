@@ -23,7 +23,6 @@ class Furadeira:
 		self.deslocamento_y = 0
 		self.default_mandril = '×'
 
-		self.set_distancia_y()
 		self.criar_cabecotes()
 		# self.__calcular_posicao_cabecotes()
 		# self.__calcular_posicao_brocas()
@@ -48,6 +47,7 @@ class Furadeira:
 	# Define a distancia de cada mandril dos cabeçotes
 	def set_distancia_y(self):
 		array = list(range(0, self.nro_mandris * self.distancia_mandris, self.distancia_mandris))
+		array = list(map(lambda i: i + self.batente_fundo, array))
 
 		if self.eixo_y == 'invertido':
 			self.distancia_y = dict(enumerate(reversed(array), 1))
@@ -72,6 +72,21 @@ class Furadeira:
 
 				if diferenca != 0:
 					self.batente_fundo = diferenca
+
+		self.set_distancia_y()
+
+
+	# Aplica o furo no cabeçote 
+	def aplica_furo(self, furos, cabecote, x, alinhamento = 'alinhado_x', eixo_aplicacao = 'y'):
+		cabecote.use()
+		cabecote.set_x(x)
+
+		if alinhamento == 'alinhado_y':
+			cabecote.use_bipartido()
+
+		# Aplica os furos
+		for furo in furos:
+			cabecote.set_mandril(furo, self.eixo_y, eixo_aplicacao)
 
 
 	# Distribuir furos para os cabeçotes
@@ -190,16 +205,7 @@ class Furadeira:
 							if cabecote.posicao == posicao 
 							and cabecote.used == False)[0]
 
-						cabecote.use()
-						cabecote.set_x(x)
-
-						if alinhamento == 'alinhado_y':
-							cabecote.use_bipartido()
-
-						# Aplica os furos
-						for furo in furos[side][alinhamento][x]:
-							cabecote.set_mandril(furo, self.eixo_y)
-
+						self.aplica_furo(furos[side][alinhamento][x], cabecote, x, alinhamento)
 
 			# Esquerda
 			# Direita
@@ -219,13 +225,8 @@ class Furadeira:
 							if cabecote.posicao == posicao 
 							and cabecote.used == False)[0]
 
-					cabecote.use()
-					cabecote.set_x(x)
-
-					# print(x)
-					# Aplica os furos
-					for furo in array:
-						cabecote.set_mandril(furo, self.eixo_y, 'x')
+					eixo_aplicacao = 'x'
+					self.aplica_furo(array, cabecote, x, None, eixo_aplicacao)
 
 
 			# Traseira
@@ -254,7 +255,6 @@ class Furadeira:
 	def verificar_agregado(self):
 		problemas = self.encontrar_problemas_limite('superior')
 
-		print(problemas)
 		if problemas:
 			for cabecote_problema in list(problemas):
 				cabecotes_inferior = list(cabecote for cabecote in self.cabecotes

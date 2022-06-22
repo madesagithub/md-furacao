@@ -61,7 +61,7 @@ class Cabecote():
 		self.add_furo(furo)
 
 		nro_mandril = self.calcular_mandril(furo, eixo_y, eixo)
-		deslocamento = getattr(furo, eixo) % self.furadeira.distancia_mandris
+		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) - self.furadeira.batente_fundo
 
 		self.mandris[nro_mandril] = furo.broca
 
@@ -77,7 +77,7 @@ class Cabecote():
 
 	# Calcular qual mandril será utilizado
 	def calcular_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
-		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) + self.furadeira.distancia_mandris
+		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) + self.furadeira.distancia_mandris - self.furadeira.batente_fundo
 
 		if eixo_y == 'invertido':
 			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
