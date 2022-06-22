@@ -55,7 +55,7 @@ modelo_furadeira = 'F500-B'
 # --------------------
 
 
-# Cria furadeira
+# Criar furadeira
 # --------------------
 def createFuradeira(modelo):
 	furadeira = Furadeira(furadeiras[modelo])
@@ -63,7 +63,7 @@ def createFuradeira(modelo):
 # --------------------
 
 
-# Cirar peça
+# Criar peça
 # --------------------
 def createPeca():
 	file = open(path, 'r', encoding='latin1')

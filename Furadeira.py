@@ -23,6 +23,7 @@ class Furadeira:
 		self.deslocamento_y = 0
 		self.default_mandril = '×'
 
+		self.set_distancia_y()
 		self.criar_cabecotes()
 		# self.__calcular_posicao_cabecotes()
 		# self.__calcular_posicao_brocas()
@@ -42,6 +43,16 @@ class Furadeira:
 					)
 					self.cabecotes.append(cabecote)
 					break
+	
+
+	# Define a distancia de cada mandril dos cabeçotes
+	def set_distancia_y(self):
+		array = list(range(0, self.nro_mandris * self.distancia_mandris, self.distancia_mandris))
+
+		if self.eixo_y == 'invertido':
+			self.distancia_y = dict(enumerate(reversed(array), 1))
+		else:
+			self.distancia_y = dict(enumerate(array, 1))
 
 
 	# Define o batente de fundo com base nas peças laterais
@@ -513,10 +524,7 @@ class Furadeira:
 		table._valign[indice] = 't'
 		for i, _ in enumerate(table._rows):
 			if i < self.nro_mandris:
-				if self.eixo_y == 'invertido':
-					table._rows[i].insert(0, (len(table._rows) - 3 - i) * self.distancia_mandris)
-				else:
-					table._rows[i].insert(0, (i) * self.distancia_mandris)
+				table._rows[i].insert(0, self.distancia_y[i + 1])
 			elif i == self.nro_mandris:
 				table._rows[i].insert(0, line)
 			elif i == self.nro_mandris + 1:
@@ -530,7 +538,7 @@ class Furadeira:
 		table._field_names.insert(0, indice)
 		for i, _ in enumerate(table._rows):
 			if i < self.nro_mandris:
-				table._rows[i].insert(0, (i+1))
+				table._rows[i].insert(0, list(self.distancia_y.keys())[i])
 			elif i == self.nro_mandris:
 				table._rows[i].insert(0, line)
 			else:
@@ -538,7 +546,7 @@ class Furadeira:
 
 		print(table)
 
-		# Infomrações adicionais
+		# Informações adicionais
 		# -------------------- 
 		info = PrettyTable()
 		info.title = 'Informações adicionais'
