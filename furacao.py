@@ -3,8 +3,7 @@ import os
 
 from prettytable import PrettyTable
 
-from furadeiras import furadeiras				# lista de furadeiras
-from setups import setups, pecas_verificadas	# dicionario para teste de validação		
+from furadeiras import furadeiras				# lista de furadeiras		
 from Furadeira import Furadeira					# classe Furadeira
 from Furo import Furo							# classe Furo
 from Peca import Peca							# classe Peca		
