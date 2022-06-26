@@ -11,7 +11,7 @@ from Peca import Peca							# classe Peca
 
 # Arquivo simples
 # --------------------
-# filename = 'TAMPO MAL 15X440X2280.bpp'										# OK
+filename = 'TAMPO MAL 15X440X2280.bpp'										# OK
 # filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'							# OK
 # filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'				# OK
 # filename = 'LATERAL DIR AÉREO 12X250X220/LATERAL DIR AÉREO 12X250X220.bpp'	# OK
@@ -47,7 +47,7 @@ from Peca import Peca							# classe Peca
 
 # Bipartido com menos mandris
 # --------------------
-filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
+# filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
 
 
 dir = os.path.dirname(__file__) + '/Peças/'
@@ -64,7 +64,7 @@ modelo_furadeira = 'F500-B'
 
 # Criar furadeira
 # --------------------
-def createFuradeira(modelo):
+def create_furadeira(modelo):
 	furadeira = Furadeira(furadeiras[modelo])
 	return furadeira
 # --------------------
@@ -72,7 +72,7 @@ def createFuradeira(modelo):
 
 # Criar peça
 # --------------------
-def createPeca():
+def create_peca():
 	file = open(path, 'r', encoding='latin1')
 	
 	flag_program = False
@@ -101,7 +101,7 @@ def createPeca():
 
 # Varrer arquivo e encontrar furos
 # --------------------
-def findFuros():
+def find_furos():
 	file = open(path, 'r', encoding='latin1')
 	furos = []
 	array_furos = []
@@ -139,9 +139,9 @@ def findFuros():
 				
 
 				# Dados
-				id = line[37].strip().replace('"', '')
+				id = line[37].replace('"', '').strip()
 				side = line[5].strip()
-				crn = int(line[6].strip().replace('"', ''))
+				crn = int(line[6].replace('"', '').strip())
 				x = float(line[7].strip())
 				y = float(line[8].strip())
 				z = float(line[9].strip())
@@ -199,7 +199,7 @@ def imprimir_furos(title, furos):
 # --------------------
 def getTestDict():
 	with open("TestDict.txt", 'w', encoding = 'utf-8') as file:
-		file.write(furadeira.toDict())
+		file.write(furadeira.to_dict())
 # --------------------
 
 
@@ -210,16 +210,16 @@ def tests():
 	data.title = 'Testes'
 	data.field_names = ["Peca", "Furadeira", "Resultado"]
 
-	for peca in pecas_verificadas:
-		for furadeira_nome in furadeiras:
-			if furadeira_nome in list(setups[peca]) and setups[peca][furadeira_nome] == furadeira.toDict():
-				resultado = 'Aprovado'
-			else:
-				resultado = 'Erro'
+	# for peca in pecas_verificadas:
+	# 	for furadeira_nome in furadeiras:
+	# 		if furadeira_nome in list(setups[peca]) and setups[peca][furadeira_nome] == furadeira.to_dict():
+	# 			resultado = 'Aprovado'
+	# 		else:
+	# 			resultado = 'Erro'
 
-			data.add_row([peca, furadeira_nome, resultado])
+	# 		data.add_row([peca, furadeira_nome, resultado])
 
-	print(data)
+	# print(data)
 # --------------------
 
 
@@ -227,15 +227,15 @@ def tests():
 # --------------------
 
 # Peça
-peca = createPeca()
+peca = create_peca()
 peca.imprimir_peca()
 
 # Furos
-furos = findFuros()
+furos = find_furos()
 imprimir_furos(peca.nome, furos)
 
 # Furadeira
-furadeira = createFuradeira(modelo_furadeira)
+furadeira = create_furadeira(modelo_furadeira)
 
 furadeira.imprimir_furadeira()
 furadeira.distribuir_furos(furos, peca)
@@ -248,5 +248,10 @@ furadeira.imprimir_cabecotes()
 
 # Testes
 # --------------------
+for furadeira_nome in furadeiras:
+	furadeira = create_furadeira(furadeira_nome)
+	furadeira.distribuir_furos(find_furos(), peca)
+
+	peca.save_peca_verificada(furadeira)
 # getTestDict()
 # tests()

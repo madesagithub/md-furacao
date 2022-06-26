@@ -188,9 +188,6 @@ class Furadeira:
 						groups = dict(OrderedDict(sorted(groups.items())))
 						furos[side][alinhamento] = groups
 
-				# print(furos[side])
-				# exit()
-
 
 				# Há um caso onde os furos podem estar alinhados em X
 				# porém, pode ser que um destes precise deslocamento em Y e outro não.
@@ -278,7 +275,6 @@ class Furadeira:
 		# self.imprimir_cabecotes()
 
 
-
 		# Problema de limites
 		# --------------------
 		# 1. Verificar quais possuem mais problemas
@@ -291,7 +287,6 @@ class Furadeira:
 		# 5. Verificar limites dos cabeçotes superiores
 		# 6. Verificar onde o agregado pode ser colocado (cabeçotes inferiores ou superiores)
 		# 7. Remover cabecote e incluir agregado
-
 
 
 		# Lista de cabeçotes
@@ -585,7 +580,7 @@ class Furadeira:
 
 
 	# Returna em formato json
-	def toJson(self):
+	def to_json(self):
 
 		furadeira = self
 
@@ -596,15 +591,21 @@ class Furadeira:
 
 		furadeira.cabecotes = [cabecote.__dict__ for cabecote in furadeira.cabecotes]
 
-		return json.dumps(furadeira.__dict__, sort_keys=True, indent='\t')
+		# Converter para json
+		furadeira = json.dumps(furadeira.__dict__, sort_keys=True, indent='\t')
 
-
-	# Retorna um dicionário python 
-	def toDict(self):
-		furadeira = self.toJson()
-		furadeira = furadeira.replace('true', 'True')
-		furadeira = furadeira.replace('false', 'False')
-		furadeira = furadeira.replace(str(json.dumps(self.default_mandril)), 'False')
+		# Tratamento de dados
+		furadeira = furadeira.replace(str(json.dumps(self.default_mandril)), 'false')
 
 		return furadeira
 
+
+	# Retorna um dicionário python 
+	def to_dict(self):
+		furadeira = self.to_json()
+
+		# Tratamento de dados
+		furadeira = furadeira.replace('true', 'True')
+		furadeira = furadeira.replace('false', 'False')
+
+		return furadeira

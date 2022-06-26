@@ -6,7 +6,10 @@ furadeiras = {
 		'nro_cabecotes': 16,					# revisar
 		'nro_mandris': 17,						# revisar
 		'distancia_mandris': 32,				# revisar
-		'distancia_min_cabecotes': 96,			# revisar
+		'distancia_min_cabecotes': {			# revisar
+			'normal': 96,
+			'rotacionado': 50,
+		},				
 		'bipartido': False,
 		'agregado': False,
 		'batente_fundo': True,

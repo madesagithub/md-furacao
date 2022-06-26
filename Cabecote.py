@@ -59,9 +59,9 @@ class Cabecote():
 	# Define qual mandril será usado para colocar a broca
 	def set_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
 		self.add_furo(furo)
+		self.set_deslocamento_y(furo, eixo)
 
 		nro_mandril = self.calcular_mandril(furo, eixo_y, eixo)
-		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) - self.furadeira.batente_fundo
 
 		self.mandris[nro_mandril] = furo.broca
 
@@ -69,15 +69,13 @@ class Cabecote():
 			eixo_rotacao = (nro_mandril // ((self.furadeira.nro_mandris // 2 + 1))) + 1
 			self.use_bipartido_eixo(eixo_rotacao)
 
-		if deslocamento != 0:
-			self.deslocamento_y = deslocamento
-
 		return nro_mandril
 
 
 	# Calcular qual mandril será utilizado
 	def calcular_mandril(self, furo, eixo_y = 'normal', eixo = 'y'):
-		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) + self.furadeira.distancia_mandris - self.furadeira.batente_fundo
+
+		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) - self.furadeira.batente_fundo
 
 		if eixo_y == 'invertido':
 			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
@@ -85,6 +83,18 @@ class Cabecote():
 			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris)
 
 		return nro_mandril
+
+	
+	# Calcula o deslocamento do cabeçote com base na necessária para alocar o furo
+	def set_deslocamento_y(self, furo, eixo):
+		# deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) + self.furadeira.distancia_mandris - self.furadeira.batente_fundo
+		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) - self.furadeira.batente_fundo
+	
+		if deslocamento != 0:
+			self.deslocamento_y = deslocamento
+
+		return deslocamento
+
 
 	# Define o número de identificação do cabeçote
 	def set_nro(self, nro):
