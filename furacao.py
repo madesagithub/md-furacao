@@ -11,47 +11,44 @@ from Peca import Peca							# classe Peca
 
 # Arquivo simples
 # --------------------
-filename = 'TAMPO MAL 15X440X2280.bpp'										# OK
-# filename = 'BASE 15X400X1046/BASE 15X400X1046.bpp'							# OK
-# filename = 'BASE AÉREO 12X266X1174/BASE AÉREO 12X266X1174.bpp'				# OK
-# filename = 'LATERAL DIR AÉREO 12X250X220/LATERAL DIR AÉREO 12X250X220.bpp'	# OK
+filename = 'TAMPO MAL 15X440X2280'												# OK
+# filename = 'BASE 15X400X1046'													# OK
+# filename = 'BASE AÉREO 12X266X1174'											# OK
+# filename = 'LATERAL DIR AÉREO 12X250X220'										# OK
 
 # Furo superior
 # --------------------
-# filename = 'BASE 12X489X1772/BASE 12X489X1772.bpp'							# OK
-# filename = 'BASE BALCÃO 15X450X1198/BASE BALCÃO 15X450X1198.bpp'				# OK
+# filename = 'BASE 12X489X1772'													# OK
+# filename = 'BASE BALCÃO 15X450X1198'											# OK
 
 # Furo superior e deslocamento de cabeçote
 # --------------------
-# filename = 'DIVISÓRIA BALCÃO 12X400X645/DIVISÓRIA BALCÃO 12X400X645.bpp'		# OK
-# filename = 'LATERAL ESQ GAVETEIRO 15X436X724/LATERAL ESQ GAVETEIRO 15X436X724.bpp' # OK
+# filename = 'DIVISÓRIA BALCÃO 12X400X645'										# OK
+# filename = 'LATERAL ESQ GAVETEIRO 15X436X724' 								# OK
 
 # Batente de fundo
 # --------------------
-# filename = 'BASE 15X289X768/BASE 15X289X768.bpp'								# OK
+# filename = 'BASE 15X289X768'													# OK
 
 # Agregado
 # --------------------
-# filename = 'DIVISÓRIA 12X387X1652.bpp'										# OK
+# filename = 'DIVISÓRIA 12X387X1652'											# OK
 
 # Bipartido
 # --------------------
-# filename = 'DIVISÓRIA BALCÃO 12X450X645/DIVISÓRIA BALCÃO 12X450X645.bpp'		# Complexo
-# filename = 'DIVISÓRIA DIR 15X440X1685/DIVISÓRIA DIR 15X440X1685.bpp'			# Complexo
-# filename = 'TAMPO SUPERIOR 12X489X574/TAMPO SUPERIOR 12X489X574.bpp'			# Complexo
+# filename = 'DIVISÓRIA BALCÃO 12X450X645'										# Complexo
+# filename = 'DIVISÓRIA DIR 15X440X1685'										# Complexo
+# filename = 'TAMPO SUPERIOR 12X489X574'										# Complexo
 
 # Bipartido e furo superior
 # --------------------
-# filename = 'LATERAL DIR COLUNA 12X250X1640/LATERAL DIR COLUNA 12X250X1640.bpp'	# Complexo
-# filename = 'LATERAL DIR BALCÃO 12X400X645/LATERAL DIR BALCÃO 12X400X645.bpp'
+# filename = 'LATERAL DIR COLUNA 12X250X1640'									# Complexo
+# filename = 'LATERAL DIR BALCÃO 12X400X645'
 
 # Bipartido com menos mandris
 # --------------------
-# filename = 'LATERAL DIR 15X544X2175/LATERAL DIR 15X544X2175.bpp'				# Complexo
+# filename = 'LATERAL DIR 15X544X2175'											# Complexo
 
-
-dir = os.path.dirname(__file__) + '/Peças/'
-path = dir + filename
 # --------------------
 
 
@@ -69,11 +66,16 @@ def create_furadeira(modelo):
 	return furadeira
 # --------------------
 
+def get_path(peca_name):
+	dir = os.path.dirname(__file__) + '/Peças/' + peca_name + '/'
+	filename = peca_name + '.bpp'
+	path = dir + filename
+	return path
 
 # Criar peça
 # --------------------
-def create_peca():
-	file = open(path, 'r', encoding='latin1')
+def create_peca(filename):
+	file = open(get_path(filename), 'r', encoding='latin1')
 	
 	flag_program = False
 	for line in file:
@@ -101,8 +103,8 @@ def create_peca():
 
 # Varrer arquivo e encontrar furos
 # --------------------
-def find_furos():
-	file = open(path, 'r', encoding='latin1')
+def find_furos(filename):
+	file = open(get_path(filename), 'r', encoding='latin1')
 	furos = []
 	array_furos = []
 	
@@ -225,33 +227,35 @@ def tests():
 
 # Sequencia principal do código
 # --------------------
+def main(filename, modelo_furadedira):
+	# Peça
+	peca = create_peca(filename)
+	peca.imprimir_peca()
 
-# Peça
-peca = create_peca()
-peca.imprimir_peca()
+	# Furos
+	furos = find_furos(filename)
+	imprimir_furos(peca.nome, furos)
 
-# Furos
-furos = find_furos()
-imprimir_furos(peca.nome, furos)
+	# Furadeira
+	furadeira = create_furadeira(modelo_furadeira)
+	furadeira.distribuir_furos(furos, peca)
 
-# Furadeira
-furadeira = create_furadeira(modelo_furadeira)
-
-furadeira.imprimir_furadeira()
-furadeira.distribuir_furos(furos, peca)
-# furadeira.imprimir_setup()
-furadeira.imprimir_cabecotes()
-# furadeira.imprimir_cabecote(5)
-# print(furos)
+	furadeira.imprimir_furadeira()
+	furadeira.imprimir_cabecotes()
+	# furadeira.imprimir_setup()
+	# furadeira.imprimir_cabecote(5)
+	# print(furos)
+	
+	return furadeira
 
 
-
+main(filename, modelo_furadeira)
 # Testes
 # --------------------
-for furadeira_nome in furadeiras:
-	furadeira = create_furadeira(furadeira_nome)
-	furadeira.distribuir_furos(find_furos(), peca)
+# for furadeira_nome in furadeiras:
+# 	furadeira = create_furadeira(furadeira_nome)
+# 	furadeira.distribuir_furos(find_furos(), peca)
 
-	peca.save_peca_verificada(furadeira)
+# 	peca.save_peca_verificada(furadeira)
 # getTestDict()
 # tests()
