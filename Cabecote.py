@@ -80,7 +80,7 @@ class Cabecote():
 		if eixo_y == 'invertido':
 			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
 		else:
-			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris)
+			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris) + 1
 
 		return nro_mandril
 

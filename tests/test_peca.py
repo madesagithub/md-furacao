@@ -6,7 +6,7 @@ import unittest
 
 sys.path.append(os.path.abspath('..'))
 sys.path.append(os.path.abspath('.'))
-from furacao import main
+from furacao import main_test
 
 class testPeca(unittest.TestCase):
 	
@@ -21,21 +21,20 @@ class testPeca(unittest.TestCase):
 			filenames = next(walk(path), (None, None, []))[2]
 
 			print(path)
-			print(filenames)
 
 			for filename in filenames:
+
+				print(f'\t{filename}')
 
 				# Peça Verificada
 				file = open(f'{path}/{filename}')
 				peca_verificada = json.load(file)
 				file.close()
 
-				furadeira = main(filename.replace('.json', ''), modelo_furadeira)
-				# exit()
+				furadeira = main_test(filename.replace('.json', ''), modelo_furadeira)
 				# ----------
 				# Verificação
-				self.assertEqual(furadeira.to_json(), peca_verificada)
-				# exit()
+				self.assertEqual(json.loads(furadeira.to_json()), peca_verificada)
 		
 
 if __name__ == '__main__':

@@ -11,15 +11,15 @@ from Peca import Peca							# classe Peca
 
 # Arquivo simples
 # --------------------
-filename = 'TAMPO MAL 15X440X2280'												# OK
-# filename = 'BASE 15X400X1046'													# OK
-# filename = 'BASE AÉREO 12X266X1174'											# OK
-# filename = 'LATERAL DIR AÉREO 12X250X220'										# OK
+filename = 'TAMPO MAL 15X440X2280'												# OK - Verificada
+filename = 'BASE 15X400X1046'													# OK - Verificada
+filename = 'BASE AÉREO 12X266X1174'												# OK - Verificada
+filename = 'LATERAL DIR AÉREO 12X250X220'										# OK - Verificada
 
 # Furo superior
 # --------------------
-# filename = 'BASE 12X489X1772'													# OK
-# filename = 'BASE BALCÃO 15X450X1198'											# OK
+filename = 'BASE 12X489X1772'													# OK - Verificada
+# filename = 'BASE BALCÃO 15X450X1198'											# Problema com nome de arquivo
 
 # Furo superior e deslocamento de cabeçote
 # --------------------
@@ -97,6 +97,7 @@ def create_peca(filename):
 				break
 
 	peca = Peca(nome, lpx, lpy, lpz)
+	file.close()
 	return peca
 # --------------------
 
@@ -174,6 +175,7 @@ def find_furos(filename):
 				furos.append(array_furos)
 				array_furos = []
 
+	file.close()
 	return furos
 # --------------------
 
@@ -205,29 +207,27 @@ def getTestDict():
 # --------------------
 
 
-# Realiza testes em peças já aprovadas
+# Testes
 # --------------------
-def tests():
-	data = PrettyTable()
-	data.title = 'Testes'
-	data.field_names = ["Peca", "Furadeira", "Resultado"]
+def adicionar_peca_verificada(filename, modelo_furadeira = None):
+	peca = create_peca(filename)
 
-	# for peca in pecas_verificadas:
-	# 	for furadeira_nome in furadeiras:
-	# 		if furadeira_nome in list(setups[peca]) and setups[peca][furadeira_nome] == furadeira.to_dict():
-	# 			resultado = 'Aprovado'
-	# 		else:
-	# 			resultado = 'Erro'
+	if modelo_furadeira == None:
+		for furadeira_nome in furadeiras:
+			furadeira = create_furadeira(furadeira_nome)
+			furadeira.distribuir_furos(find_furos(filename), peca)
 
-	# 		data.add_row([peca, furadeira_nome, resultado])
+			peca.save_peca_verificada(furadeira)
+	else:
+		furadeira = create_furadeira(modelo_furadeira)
+		furadeira.distribuir_furos(find_furos(filename), peca)
 
-	# print(data)
-# --------------------
+		peca.save_peca_verificada(furadeira)
 
 
 # Sequencia principal do código
 # --------------------
-def main(filename, modelo_furadedira):
+def main(filename, modelo_furadeira):
 	# Peça
 	peca = create_peca(filename)
 	peca.imprimir_peca()
@@ -249,13 +249,22 @@ def main(filename, modelo_furadedira):
 	return furadeira
 
 
-main(filename, modelo_furadeira)
-# Testes
+# Função para testes
 # --------------------
-# for furadeira_nome in furadeiras:
-# 	furadeira = create_furadeira(furadeira_nome)
-# 	furadeira.distribuir_furos(find_furos(), peca)
+def main_test(filename, modelo_furadeira):
+	# Peça
+	peca = create_peca(filename)
 
-# 	peca.save_peca_verificada(furadeira)
-# getTestDict()
-# tests()
+	# Furos
+	furos = find_furos(filename)
+
+	# Furadeira
+	furadeira = create_furadeira(modelo_furadeira)
+	furadeira.distribuir_furos(furos, peca)
+
+	return furadeira
+
+
+main(filename, modelo_furadeira)
+# adicionar_peca_verificada(filename)
+# --------------------
