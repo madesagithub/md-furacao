@@ -95,32 +95,10 @@ class Furadeira:
 		self.define_batente_fundo(furos)
 
 		# Agrupar por side
-		groups = defaultdict(list)
-		for array in furos:
-			for furo in array:
-				groups[furo.side].append(array)
-				break
-		furos = dict(groups.items())
+		furos = self.group_furos_by_side(furos)
 
 		# Agrupa furos por alinhamento
-		# for side in furos:
-		# 	if side in ['0 : 0', '0 : 5']:
-		# 		groups = defaultdict(list)
-		# 		for array in furos[side]:
-		# 			x_array = list(set(list(furo.x for furo in array)))
-		# 			y_array = list(set(list(furo.y for furo in array)))
-
-		# 			if len(x_array) == 1:
-		# 				# Alinhado no eixo X
-		# 				groups['alinhado_x'].append(array)
-		# 				# groups[side].append(array)
-		# 			elif len(y_array) == 1:
-		# 				# Alinhado no eixo Y
-		# 				groups['alinhado_y'].append(array)
-		# 			else:
-		# 				# Não alinhado
-		# 				groups['nao_alinhado'].append(array)
-		# 		furos[side] = dict(groups.items())
+		# furos = self.group_furos_by_alinhamento(furos)
 
 		# Distribuir furos
 		for side in furos:
@@ -234,6 +212,40 @@ class Furadeira:
 
 		self.resolver_limites()
 		self.verificar_agregado()
+
+
+	# Agrupar por side
+	def group_furos_by_side(self, furos):
+		groups = defaultdict(list)
+		for array in furos:
+			for furo in array:
+				groups[furo.side].append(array)
+				break
+		return dict(groups.items())
+
+	
+	# Agrupa furos por alinhamento
+	def group_furos_by_alinhamento(self, furos):
+		for side in furos:
+			if side in ['0 : 0', '0 : 5']:
+				groups = defaultdict(list)
+				for array in furos[side]:
+					x_array = list(set(list(furo.x for furo in array)))
+					y_array = list(set(list(furo.y for furo in array)))
+
+					if len(x_array) == 1:
+						# Alinhado no eixo X
+						groups['alinhado_x'].append(array)
+						# groups[side].append(array)
+					elif len(y_array) == 1:
+						# Alinhado no eixo Y
+						groups['alinhado_y'].append(array)
+					else:
+						# Não alinhado
+						groups['nao_alinhado'].append(array)
+				furos[side] = dict(groups.items())
+		
+		return furos
 
 
 	# Resolve os problemas relacionados aos limites

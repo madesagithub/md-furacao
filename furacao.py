@@ -11,14 +11,14 @@ from Peca import Peca							# classe Peca
 
 # Arquivo simples
 # --------------------
-filename = 'TAMPO MAL 15X440X2280'												# OK - Verificada
-filename = 'BASE 15X400X1046'													# OK - Verificada
-filename = 'BASE AÉREO 12X266X1174'												# OK - Verificada
-filename = 'LATERAL DIR AÉREO 12X250X220'										# OK - Verificada
+# filename = 'TAMPO MAL 15X440X2280'											# OK - Verificada
+# filename = 'BASE 15X400X1046'													# OK - Verificada
+# filename = 'BASE AÉREO 12X266X1174'											# OK - Verificada
+# filename = 'LATERAL DIR AÉREO 12X250X220'										# OK - Verificada
 
 # Furo superior
 # --------------------
-filename = 'BASE 12X489X1772'													# OK - Verificada
+# filename = 'BASE 12X489X1772'													# OK - Verificada
 # filename = 'BASE BALCÃO 15X450X1198'											# Problema com nome de arquivo
 
 # Furo superior e deslocamento de cabeçote
@@ -36,12 +36,12 @@ filename = 'BASE 12X489X1772'													# OK - Verificada
 
 # Bipartido
 # --------------------
-# filename = 'DIVISÓRIA BALCÃO 12X450X645'										# Complexo
-# filename = 'DIVISÓRIA DIR 15X440X1685'										# Complexo
-# filename = 'TAMPO SUPERIOR 12X489X574'										# Complexo
+filename = 'TAMPO SUPERIOR 12X489X574'											# 
 
 # Bipartido e furo superior
 # --------------------
+# filename = 'DIVISÓRIA DIR 15X440X1685'										# 
+# filename = 'DIVISÓRIA BALCÃO 12X450X645'										# 
 # filename = 'LATERAL DIR COLUNA 12X250X1640'									# Complexo
 # filename = 'LATERAL DIR BALCÃO 12X400X645'
 
@@ -139,7 +139,6 @@ def find_furos(filename):
 				# line[37]: "id"
 
 				line = line.split(',')
-				
 
 				# Dados
 				id = line[37].replace('"', '').strip()
@@ -199,14 +198,6 @@ def imprimir_furos(title, furos):
 # --------------------
 
 
-# Obtém o dicionário para realização de testes
-# --------------------
-def getTestDict():
-	with open("TestDict.txt", 'w', encoding = 'utf-8') as file:
-		file.write(furadeira.to_dict())
-# --------------------
-
-
 # Testes
 # --------------------
 def adicionar_peca_verificada(filename, modelo_furadeira = None):
@@ -249,7 +240,7 @@ def main(filename, modelo_furadeira):
 	return furadeira
 
 
-# Função para testes
+# Sequencia principal para testes
 # --------------------
 def main_test(filename, modelo_furadeira):
 	# Peça

@@ -69,6 +69,7 @@ class Cabecote():
 			eixo_rotacao = (nro_mandril // ((self.furadeira.nro_mandris // 2 + 1))) + 1
 			self.use_bipartido_eixo(eixo_rotacao)
 
+		self.set_deslocamento_y_eixo_rotacao()
 		return nro_mandril
 
 
@@ -77,11 +78,17 @@ class Cabecote():
 
 		deslocamento = (getattr(furo, eixo) % self.furadeira.distancia_mandris) - self.furadeira.batente_fundo
 
+		if furo.id == 'P1012_3' or furo.id == 'P1012_2_2':
+			print (furo.id, getattr(furo, eixo) % 32, deslocamento)
+
+
 		if eixo_y == 'invertido':
 			nro_mandril = int(len(self.mandris) + 1 - ((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris))
 		else:
 			nro_mandril = int((getattr(furo, eixo) + deslocamento) // self.furadeira.distancia_mandris) + 1
 
+		if furo.id == 'P1012_3' or furo.id == 'P1012_2_2':
+			print (furo.id, nro_mandril)
 		return nro_mandril
 
 	
@@ -94,6 +101,10 @@ class Cabecote():
 			self.deslocamento_y = deslocamento
 
 		return deslocamento
+
+	
+	def set_deslocamento_y_eixo_rotacao(self):
+		pass
 
 
 	# Define o número de identificação do cabeçote
