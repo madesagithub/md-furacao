@@ -1,12 +1,11 @@
-# import pandas as pd
 import os
 
 from prettytable import PrettyTable
 
-from furadeiras import furadeiras				# lista de furadeiras		
+from furadeiras import furadeiras				# lista de furadeiras
 from Furadeira import Furadeira					# classe Furadeira
 from Furo import Furo							# classe Furo
-from Peca import Peca							# classe Peca		
+from Peca import Peca							# classe Peca
 
 
 # Arquivos de entrada
@@ -67,12 +66,12 @@ filename = 'TAMPO SUP COLUNA 12X248X616'
 
 # Bipartido
 # --------------------
-# filename = 'TAMPO SUPERIOR 12X489X574'										# 
+# filename = 'TAMPO SUPERIOR 12X489X574'										#
 
 # Bipartido e furo superior
 # --------------------
-# filename = 'DIVISÓRIA DIR 15X440X1685'										# 
-# filename = 'DIVISÓRIA BALCÃO 12X450X645'										# 
+# filename = 'DIVISÓRIA DIR 15X440X1685'										#
+# filename = 'DIVISÓRIA BALCÃO 12X450X645'										#
 # filename = 'LATERAL DIR COLUNA 12X250X1640'									# Complexo
 # filename = 'LATERAL DIR BALCÃO 12X400X645'
 
@@ -108,7 +107,7 @@ def get_path(peca_name):
 # --------------------
 def create_peca(filename):
 	file = open(get_path(filename), 'r', encoding='latin1')
-	
+
 	flag_program = False
 	for line in file:
 		if line.find("PAN=LPX") == 0:
@@ -120,7 +119,7 @@ def create_peca(filename):
 		if line.find("PAN=LPZ") == 0:
 			lpz = float(line.split('|')[1])
 			lpz = round(lpz, 1)
-		
+
 		if line.find("[PROGRAM]") == 0:
 			flag_program = True
 		elif flag_program:
@@ -140,7 +139,7 @@ def find_furos(filename):
 	file = open(get_path(filename), 'r', encoding='latin1')
 	furos = []
 	array_furos = []
-	
+
 	flag_program = False
 	flag_nome = False
 
@@ -242,9 +241,14 @@ def show_pdf(filename):
 	else:
 		path = path.replace('.bpp', '-F.pdf')
 
-	os.startfile(path)
-	# os.system('evince ' + path + ' &')
-	# os.system(path)
+	try:
+		# Windows
+		os.startfile(path)
+	except:
+		# Linux
+		path = path.replace(' ', '\ ')
+		os.system(f'evince {path} &')
+
 
 
 # Testes
@@ -286,8 +290,8 @@ def main(filename, modelo_furadeira):
 	# furadeira.imprimir_cabecote(5)
 	# print(furos)
 
-	show_pdf(filename)
-	
+	# show_pdf(filename)
+
 	return furadeira
 
 
