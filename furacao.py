@@ -9,6 +9,37 @@ from Furo import Furo							# classe Furo
 from Peca import Peca							# classe Peca		
 
 
+# Arquivos de entrada
+# Z:\FURACAO\0GLAMY\G20070\G20070 FURAÇÃO
+# --------------------
+filename = 'BASE COLUNA 15X250X640'
+filename = 'TAMPO SUP COLUNA 12X248X616'
+# filename = 'BASE 15X400X1046'
+# filename = 'BASE COLUNA 15X250X640'
+# filename = 'BASE MAIOR AÉREO 12X248X1026'
+# filename = 'COSTA GAV  15X110X269'
+# filename = 'DIVISÓRIA AÉREO 12X250X538'
+# filename = 'DIVISÓRIA BALCÃO 12X400X645'
+# filename = 'FRENTE GAV R 15mm 15X158X344'
+# filename = 'LATERAL DIR AÉREO 12X250X220'
+# filename = 'LATERAL DIR BALCÃO 12X400X645'
+# filename = 'LATERAL DIR COLUNA 12X250X1640'
+# filename = 'LATERAL ESQ AÉREO 12X250X550'
+# filename = 'LATERAL ESQ BALCÃO 12X400X645'
+# filename = 'LATERAL ESQ COLUNA 12X250X1640'
+# filename = 'LATERAL GAV DIR R 10mm 15X110X350'
+# filename = 'LATERAL GAV ESQ R 10mm 15X110X350'
+# filename = 'MONTANTE BALCÃO 12X50X645'
+# filename = 'PORTA  AÉREO 15X521X349'
+# filename = 'PORTA COLUNA  15X315X822'
+# filename = 'PORTA MAIOR BALCÃO 15X344X652'
+# filename = 'PORTA MENOR BALCÃO 15X344X489'
+# filename = 'TAMPO AÉREO 12X248X1626'
+# filename = 'TAMPO BALCÃO 15X440X1048'
+# filename = 'TAMPO INTERM ÁEREO 12X248X1026'
+# filename = 'TAMPO INTERM COLUNA 12X248X616'
+
+
 # Arquivo simples
 # --------------------
 # filename = 'TAMPO MAL 15X440X2280'											# OK - Verificada
@@ -36,7 +67,7 @@ from Peca import Peca							# classe Peca
 
 # Bipartido
 # --------------------
-filename = 'TAMPO SUPERIOR 12X489X574'											# 
+# filename = 'TAMPO SUPERIOR 12X489X574'										# 
 
 # Bipartido e furo superior
 # --------------------
@@ -67,7 +98,8 @@ def create_furadeira(modelo):
 # --------------------
 
 def get_path(peca_name):
-	dir = os.path.dirname(__file__) + '/Peças/' + peca_name + '/'
+	# dir = os.path.dirname(__file__) + '/Peças/' + peca_name + '/'
+	dir = os.path.dirname(__file__) + '/Peças/G20070/' + peca_name + '/'
 	filename = peca_name + '.bpp'
 	path = dir + filename
 	return path
@@ -153,7 +185,7 @@ def find_furos(filename):
 
 				broca = str(diametro)
 				if (p == 1):
-					broca += 'T'
+					broca += 'P'
 
 				# Cria o Furo
 				furo = Furo(
@@ -198,6 +230,23 @@ def imprimir_furos(title, furos):
 # --------------------
 
 
+# Abrir o  arquivo de furos
+# --------------------
+def show_pdf(filename):
+	path = get_path(filename)
+
+	if os.path.exists(path.replace('.bpp', '.pdf')):
+		path = path.replace('.bpp', '.pdf')
+	elif os.path.exists(path.replace('.bpp', '-IMG.pdf')):
+		path = path.replace('.bpp', '-IMG.pdf')
+	else:
+		path = path.replace('.bpp', '-F.pdf')
+
+	os.startfile(path)
+	# os.system('evince ' + path + ' &')
+	# os.system(path)
+
+
 # Testes
 # --------------------
 def adicionar_peca_verificada(filename, modelo_furadeira = None):
@@ -236,6 +285,8 @@ def main(filename, modelo_furadeira):
 	# furadeira.imprimir_setup()
 	# furadeira.imprimir_cabecote(5)
 	# print(furos)
+
+	show_pdf(filename)
 	
 	return furadeira
 

@@ -95,12 +95,12 @@
 
 | Side  | CRN	| Posição		  			|
 |------	|------	|--------------------------	|
-| 0 : 0 | 1		| Inferior 					|
+| 0 : 0 | 1		| Superior 					|
 | 0 : 1 | 1	 	| Topo/Vertical Esquerda	|
 | 0 : 2 | 	 	|				  			|
 | 0 : 3 | 4	 	| Topo/Vertical Direita	 	|
 | 0 : 4 | 	 	|						   	|
-| 0 : 5 | 4	 	| Superior					|
+| 0 : 5 | 4	 	| Inferior					|
 
 | CRN   | Posição		  							|
 |------ |------------------------------------------	|
